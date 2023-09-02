@@ -5,7 +5,7 @@ import ContentCard from './ContentCard'
 const ContentsActual = () => {
   return (
     <>
-    {true?<ContentList/>:<ContentCard/>}
+    {false?<ContentList/>:<ContentCard/>}
     </>
   )
 }

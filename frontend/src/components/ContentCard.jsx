@@ -16,12 +16,13 @@ const ContentCard = () => {
     <div style={{
       display: 'flex',
       justifyContent: 'center',
-      paddingLeft:'100px'
+      paddingLeft:'100px',
+      paddingRight:'100px'
     }}>
     <div class="container m-4" >
       <div
         class="row row-cols-1 row-cols-md-2
-                    row-cols-lg-5 g-2"
+                    row-cols-lg-4 g-4"
       >
         {Array.from({ length: 10 }).map((_, idx) => (
         <div className="col" key={idx}>

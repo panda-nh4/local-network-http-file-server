@@ -6,7 +6,7 @@ const ContentsOptions = () => {
       display: "flex",
       width: "100%",
       justifyContent: "space-between",
-      paddingRight: "80px",
+      paddingRight: "50px",
       paddingLeft: "50px",
     }}>
     <input type="checkbox"/>
@@ -50,16 +50,18 @@ const ContentsOptions = () => {
         <div>Modified</div>
         <div style={{paddingLeft:"7px"}}>{true ? <BsArrowDown /> : <BsArrowUp />}</div>
       </div>
-      <div
+      
+    </div>
+    <div
         style={{
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          paddingLeft:"100px"
         }}
       >
         {true ? <BsGrid /> : <BsList />}
       </div>
-    </div>
     </div>
   );
 };
