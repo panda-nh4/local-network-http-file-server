@@ -1,14 +1,22 @@
-import React from 'react'
-import ContentsOptions from './ContentsOptions'
-import ContentsActual from './ContentsActual'
+import React from "react";
+import ContentsOptions from "./ContentsOptions";
+import ContentsActual from "./ContentsActual";
 
 const Contents = () => {
   return (
     <>
-    <ContentsOptions/>
-    <ContentsActual/>
-    </>
-  )
-}
+      <ContentsOptions />
+      <div
+        style={{
+          borderTop: "1px solid #000 ",
+          marginLeft: 20,
+          marginRight: 20,
+        }}
+      ></div>
 
-export default Contents
+      <ContentsActual />
+    </>
+  );
+};
+
+export default Contents;

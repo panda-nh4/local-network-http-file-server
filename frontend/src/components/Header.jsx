@@ -31,7 +31,7 @@ const Header = () => {
                 </Nav>
               </Offcanvas.Body>
             </Navbar.Offcanvas>
-            <Navbar.Brand href="#" className='navbar-brand mx-auto '>Navbar Offcanvas</Navbar.Brand>
+            <Navbar.Brand href="#" className='navbar-brand mx-auto '>Redo in MUI</Navbar.Brand>
             <Nav.Link className='text-white px-4' href="#action1"><FiSearch/></Nav.Link>
             <Nav.Link className='text-white px-4' href="#action1" ><BsCodeSlash/></Nav.Link>
           </Container>

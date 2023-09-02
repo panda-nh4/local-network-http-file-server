@@ -7,7 +7,7 @@ const App = () => {
   return (
     <>
     <Header/>
-    <CurrentLocation/>
+    <CurrentLocation />
     <Contents/>
     </>
   )
