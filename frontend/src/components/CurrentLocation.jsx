@@ -7,7 +7,7 @@ const CurrentLocation = () => {
   return (
     <div className='px-5'>
     <Breadcrumb >
-      <StyledBreadcrumbItem href='#'>Redo</StyledBreadcrumbItem>
+      <StyledBreadcrumbItem >Root</StyledBreadcrumbItem>
       <StyledBreadcrumbItem href="#">
         In
       </StyledBreadcrumbItem>
