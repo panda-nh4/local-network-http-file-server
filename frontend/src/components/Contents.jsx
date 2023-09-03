@@ -9,8 +9,8 @@ const Contents = () => {
       <div
         style={{
           borderTop: "1px solid #000 ",
-          marginLeft: 20,
-          marginRight: 20,
+          marginLeft:"3%",
+          marginRight: "3%",
         }}
       ></div>
 
