@@ -6,7 +6,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import Button from "react-bootstrap/Button";
 const ContentItem = () => {
   function useMediaQuery(query) {
-    const [matches, setMatches] = React.useState(true);
+    const [matches, setMatches] = React.useState(false);
     React.useEffect(() => {
       const matchQueryList = window.matchMedia(query);
       function handleChange(e) {
@@ -56,7 +56,7 @@ const ContentItem = () => {
       <div
         style={{
           display: "flex",
-          width: "86%",
+          width: "84%",
           // justifyContent: "space-between",
           // paddingRight: "00px",
           paddingLeft: "10px",
@@ -104,7 +104,7 @@ const ContentItem = () => {
             alignItems: "center",
             justifyContent: "right",
             paddingLeft: "0px",
-            width: "4%",
+            width: "6%",
           }}
         >
           <Dropdown>

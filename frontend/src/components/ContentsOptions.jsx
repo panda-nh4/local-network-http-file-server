@@ -31,7 +31,7 @@ const ContentsOptions = () => {
       <div
         style={{
           display: "flex",
-          width: "86%",
+          width: "84%",
           // justifyContent: "space-between",
           // paddingRight: "00px",
           paddingLeft: "10px",
