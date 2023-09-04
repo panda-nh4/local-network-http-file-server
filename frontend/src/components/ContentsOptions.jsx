@@ -1,6 +1,12 @@
 import React from "react";
 import { BsArrowDown, BsArrowUp, BsList, BsGrid } from "react-icons/bs";
+import {useSelector,useDispatch} from "react-redux"
+import { changeView } from "../slices/viewSlice";
+import Button from 'react-bootstrap/Button';
 const ContentsOptions = () => {
+  const viewType=useSelector((state)=>state.view.listview)
+  const dispatch=useDispatch();
+
   return (
     <div
       style={{
@@ -15,7 +21,8 @@ const ContentsOptions = () => {
         style={{
           display: "flex",
           width: "4%",
-          // justifyContent: "space-between",
+          justifyContent: "start",
+          alignItems:"center"
           // paddingRight: "00px",
         }}
       >
@@ -35,7 +42,7 @@ const ContentsOptions = () => {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            width: "45%",
+            width: "43%",
           }}
         >
           <div>Name</div>
@@ -76,10 +83,11 @@ const ContentsOptions = () => {
           alignItems: "center",
           justifyContent: "right",
           paddingLeft: "0px",
-          width:"4%"
+          width:"6%"
         }}
       >
-        {true ? <BsGrid /> : <BsList />}
+        
+        {viewType? <Button variant="light" style={{background:"white"}} onClick={()=>dispatch(changeView())}><BsGrid/></Button>:<Button variant="light" style={{background:"white"}} onClick={()=>dispatch(changeView())}><BsList/></Button>}
       </div>
     </div>
   );
