@@ -16,7 +16,7 @@ const ContentItem = () => {
     }, [query]);
     return matches;
   }
-  let isDesktop = !useMediaQuery("(min-width: 850px)");
+  let isDesktop = useMediaQuery("(min-width: 850px)");
 
   const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
     <a
@@ -97,7 +97,7 @@ const ContentItem = () => {
         </div>
       </div>
 
-      {isDesktop ? (
+      {!isDesktop ? (
         <div
           style={{
             display: "flex",
