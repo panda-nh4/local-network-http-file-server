@@ -3,7 +3,7 @@ import CardItem from "./CardItem";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Container from "react-bootstrap/Container";
-const ContentCard = () => {
+const ContentCard = ({contents}) => {
   return (
     // <div className='container mt-4'>
     // <Row className="g-4 px-4 mx-auto" style={{justifyContent:"left"}}>
@@ -24,9 +24,13 @@ const ContentCard = () => {
         className="row row-cols-1 row-cols-md-2
                     row-cols-lg-4 g-4"
       >
-        {Array.from({ length: 10 }).map((_, idx) => (
+        {contents.folders.map((_, idx) => (
         <div className="col" key={idx} style={{display:"flex",justifyContent:"center"}}>
-          <CardItem/>
+          <CardItem fName={_} isFolder={true}/>
+          </div>))}
+          {contents.files.map((_, idx) => (
+        <div className="col" key={idx}  style={{display:"flex",justifyContent:"center"}}>
+          <CardItem fName={_} isFolder={false}/>
           </div>))}
       </div>
     </div>

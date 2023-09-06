@@ -4,6 +4,7 @@ import { StyledBreadcrumbItem } from "./styles.jsx";
 import { useSelector, useDispatch } from "react-redux";
 import Button from "react-bootstrap/Button";
 import { setPath } from "../slices/pathSlice.js";
+import { setIdle } from "../slices/contentSlice.js";
 const CurrentLocation = () => {
   const dispatch=useDispatch()
   const path = useSelector((state) => state.path.currentPath);
@@ -11,7 +12,7 @@ const CurrentLocation = () => {
     <div className="px-3" style={{ display: "flex" }}>
       <Breadcrumb style={{ display: "flex", overflowWrap: "break-word" }}>
         <StyledBreadcrumbItem active>
-          <Button variant="light" onClick={()=>dispatch(setPath(""))} style={{ background: "white" }}>
+          <Button variant="light" onClick={()=>{dispatch(setPath(""));dispatch(setIdle())}} style={{ background: "white" }}>
             <span
               style={{
                 display: "block",
@@ -44,7 +45,7 @@ const CurrentLocation = () => {
                   </span>
                 </Button>
               ) : (
-                <Button variant="light" onClick={()=>dispatch(setPath(path.split("/").slice(0,idx+1).join("/")))} style={{ background: "white" }}>
+                <Button variant="light" onClick={()=>{dispatch(setPath(path.split("/").slice(0,idx+1).join("/")));dispatch(setIdle())}} style={{ background: "white" }}>
                   <span
                     style={{
                       display: "block",

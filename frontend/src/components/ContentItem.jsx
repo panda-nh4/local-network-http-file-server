@@ -1,10 +1,27 @@
 import React from "react";
-import { BsDownload, BsThreeDotsVertical } from "react-icons/bs";
+import { BsFolderFill,BsDownload, BsThreeDotsVertical,BsFillFileEarmarkFill } from "react-icons/bs";
 import {BiRename,BiCopy,BiCut} from "react-icons/bi"
 import {RiDeleteBin6Line} from "react-icons/ri"
 import Dropdown from "react-bootstrap/Dropdown";
 import Button from "react-bootstrap/Button";
-const ContentItem = () => {
+import { useDispatch, useSelector } from "react-redux";
+import { setPath } from "../slices/pathSlice.js";
+import { setIdle } from "../slices/contentSlice.js";
+
+const ContentItem = ({fName,isFolder}) => {
+  const dispatch = useDispatch();
+  const path = useSelector((state) => state.path.currentPath);
+  const clicked = (title) => {
+    if (isFolder) {
+      const newPath=path===""?title:path.concat("/", title);
+      dispatch(setPath(newPath));
+      dispatch(setIdle());
+    }
+    else{
+      console.log("Clicked")
+    }
+  };
+
   function useMediaQuery(query) {
     const [matches, setMatches] = React.useState(false);
     React.useEffect(() => {
@@ -64,13 +81,14 @@ const ContentItem = () => {
       >
         <div
           style={{
-            display: "flex",
+            display: "inline",
             alignItems: "center",
             justifyContent: "left",
             width: "43%",
+            overflow:"hidden"
           }}
         >
-          <div>Name </div>
+          {isFolder?<span onClick={() => clicked(fName)} style={{display:"inline-flex", whiteSpace:"nowrap",cursor:"pointer"}}><BsFolderFill style={{alignSelf:"center"}}/> &nbsp; {fName}</span>:<span onClick={() => clicked(fName)} style={{display:"inline-flex", whiteSpace:"nowrap",cursor:"pointer"}}><BsFillFileEarmarkFill style={{alignSelf:"center"}}/> &nbsp; {fName}</span>}
           <div style={{ paddingLeft: "7px" }}></div>
         </div>
         <div
