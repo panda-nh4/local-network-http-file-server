@@ -1,9 +1,52 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import CardItem from "./CardItem";
-import Col from "react-bootstrap/Col";
-import Row from "react-bootstrap/Row";
-import Container from "react-bootstrap/Container";
-const ContentCard = ({contents}) => {
+const ContentCard = ({ folders, files }) => {
+  const sortedBy = useSelector((state) => state.sortContent.sortBy);
+  const sortAscending = useSelector((state) => state.sortContent.sortAscending);
+  var sortedFolders = [...folders];
+  var sortedFiles = [...files];
+  const sortByModified = (fList) => {
+    fList.sort((a, b) => {
+      return new Date(a.mtime).getTime() - new Date(b.mtime).getTime();
+    });
+    fList.sort((a, b) => {
+      return new Date(a.mtime).getTime() - new Date(b.mtime).getTime();
+    });
+  };
+  const sortByName = (fList) => {
+    fList.sort((a, b) => {
+      return a.fName > b.fName ? 1 : b.fName > a.fName ? -1 : 0;
+    });
+    fList.sort((a, b) => {
+      return a.fName > b.fName ? 1 : b.fName > a.fName ? -1 : 0;
+    });
+  };
+  const sortBySize = (fList) => {
+    fList.sort((a, b) => {
+      return parseInt(a.actualSize) - parseInt(b.actualSize);
+    });
+    fList.sort((a, b) => {
+      return parseInt(a.size) - parseInt(b.size);
+    });
+  };
+  const sorter = () => {
+    if (sortedBy === "Name") {
+      sortByName(sortedFolders);
+      sortByName(sortedFiles);
+    } else if (sortedBy === "Size") {
+      sortBySize(sortedFolders);
+      sortBySize(sortedFiles);
+    } else {
+      sortByModified(sortedFolders);
+      sortByModified(sortedFiles);
+    }
+    if (!sortAscending) {
+      sortedFiles.reverse();
+      sortedFolders.reverse();
+    }
+  };
+  sorter();
   return (
     // <div className='container mt-4'>
     // <Row className="g-4 px-4 mx-auto" style={{justifyContent:"left"}}>
@@ -13,27 +56,39 @@ const ContentCard = ({contents}) => {
     //       </Col>))}
     // </Row>
     // </div>
-    <div style={{
-      display: 'flex',
-      justifyContent: 'center',
-      // paddingLeft:'85px',
-      // paddingRight:'100px'
-    }}>
-    <div className="container m-4" >
-      <div
-        className="row row-cols-1 row-cols-md-2
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        // paddingLeft:'85px',
+        // paddingRight:'100px'
+      }}
+    >
+      <div className="container m-4">
+        <div
+          className="row row-cols-1 row-cols-md-2
                     row-cols-lg-4 g-4"
-      >
-        {contents.folders.map((_, idx) => (
-        <div className="col" key={idx} style={{display:"flex",justifyContent:"center"}}>
-          <CardItem fName={_} isFolder={true}/>
-          </div>))}
-          {contents.files.map((_, idx) => (
-        <div className="col" key={idx}  style={{display:"flex",justifyContent:"center"}}>
-          <CardItem fName={_} isFolder={false}/>
-          </div>))}
+        >
+          {sortedFolders.map((_, idx) => (
+            <div
+              className="col"
+              key={idx}
+              style={{ display: "flex", justifyContent: "center" }}
+            >
+              <CardItem fName={_.fName} isFolder={true} size={_.actualSize} modified={_.mtime} />
+            </div>
+          ))}
+          {sortedFiles.map((_, idx) => (
+            <div
+              className="col"
+              key={idx}
+              style={{ display: "flex", justifyContent: "center" }}
+            >
+              <CardItem fName={_.fName} isFolder={false} size={_.size} modified={_.mtime} />
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
     </div>
   );
 };

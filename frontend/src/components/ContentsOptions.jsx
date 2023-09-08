@@ -3,9 +3,22 @@ import { BsArrowDown, BsArrowUp, BsList, BsGrid } from "react-icons/bs";
 import {useSelector,useDispatch} from "react-redux"
 import { changeView } from "../slices/viewSlice";
 import Button from 'react-bootstrap/Button';
+import { setSortAscending, setSortBy } from "../slices/sortSlice";
 const ContentsOptions = () => {
   const viewType=useSelector((state)=>state.view.listview)
   const dispatch=useDispatch();
+  const sortedBy=useSelector((state)=>state.sortContent.sortBy)
+  const sortAscending=useSelector((state)=>state.sortContent.sortAscending)
+  const arrowType=sortAscending?<BsArrowUp/>:<BsArrowDown/>
+  const clicked=(toSortBy)=>{
+    if (sortedBy===toSortBy){
+      dispatch(setSortAscending(!sortAscending))
+    }
+    else{
+      dispatch(setSortBy(toSortBy))
+    }
+
+  }
 
   return (
     <div
@@ -45,9 +58,9 @@ const ContentsOptions = () => {
             width: "43%",
           }}
         >
-          <div>Name</div>
-          <div style={{ paddingLeft: "7px" }}>
-            {true ? <BsArrowDown /> : <BsArrowUp />}
+          <div style={{cursor:"pointer"}} onClick={()=>clicked("Name")}>Name</div>
+          <div style={{ paddingLeft: "7px",cursor:"pointer"}} onClick={()=>clicked("Name")}>
+            {sortedBy==="Name" ? arrowType:<></>}
           </div>
         </div>
         <div
@@ -58,9 +71,9 @@ const ContentsOptions = () => {
             width: "20%",
           }}
         >
-          <div>Size</div>
-          <div style={{ paddingLeft: "7px" }}>
-            {true ? <BsArrowDown /> : <BsArrowUp />}
+          <div style={{cursor:"pointer"}} onClick={()=>clicked("Size")}>Size</div>
+          <div style={{ paddingLeft: "7px",cursor:"pointer" }}onClick={()=>clicked("Size")} >
+          {sortedBy==="Size" ? arrowType:<></>}
           </div>
         </div>
         <div
@@ -71,9 +84,9 @@ const ContentsOptions = () => {
             width: "35%",
           }}
         >
-          <div>Modified</div>
-          <div style={{ paddingLeft: "7px" }}>
-            {true ? <BsArrowDown /> : <BsArrowUp />}
+          <div style={{cursor:"pointer"}} onClick={()=>clicked("Modified")}>Modified</div>
+          <div style={{ paddingLeft: "7px",cursor:"pointer" }} onClick={()=>clicked("Modified")}>
+          {sortedBy==="Modified" ? arrowType:<></>}
           </div>
         </div>
       </div>

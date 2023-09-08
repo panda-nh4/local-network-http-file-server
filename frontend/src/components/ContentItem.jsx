@@ -1,24 +1,75 @@
 import React from "react";
-import { BsFolderFill,BsDownload, BsThreeDotsVertical,BsFillFileEarmarkFill } from "react-icons/bs";
-import {BiRename,BiCopy,BiCut} from "react-icons/bi"
-import {RiDeleteBin6Line} from "react-icons/ri"
+import {
+  BsFolderFill,
+  BsDownload,
+  BsThreeDotsVertical,
+  BsFillFileEarmarkFill,
+} from "react-icons/bs";
+import { BiRename, BiCopy, BiCut } from "react-icons/bi";
+import { RiDeleteBin6Line } from "react-icons/ri";
 import Dropdown from "react-bootstrap/Dropdown";
 import Button from "react-bootstrap/Button";
 import { useDispatch, useSelector } from "react-redux";
 import { setPath } from "../slices/pathSlice.js";
 import { setIdle } from "../slices/contentSlice.js";
 
-const ContentItem = ({fName,isFolder}) => {
+const ContentItem = ({ fName, isFolder, size, modified }) => {
   const dispatch = useDispatch();
+  const curDate = new Date();
+  const modTime = (mdate) => {
+    const mDate = new Date(mdate);
+    const diff = curDate.getTime() - mDate.getTime();
+    const differenceInsec = Math.floor(diff / 1000);
+    if (differenceInsec < 60) return "< 1 min ago";
+    if (differenceInsec < 3600)
+      return `${Math.floor(differenceInsec / 60)} mins ago`;
+    if (differenceInsec < 3600 * 24) {
+      const hours = Math.floor(differenceInsec / 3600);
+      return `${hours} ${hours === 1 ? "hour" : "hours"} ago`;
+    }
+    if (differenceInsec < 3600 * 24 * 30) {
+      const days = Math.floor(differenceInsec / (3600 * 24));
+      return `${days} ${days === 1 ? "day" : "days"} ago`;
+    }
+    if (differenceInsec < 3600 * 24 * 365) {
+      const months = Math.floor(differenceInsec / (3600 * 24 * 30));
+      return `${months} ${months === 1 ? "month" : "months"} ago`;
+    }
+    if (differenceInsec > 3600 * 24 * 365) {
+      const years = Math.floor(differenceInsec / (3600 * 24 * 365));
+      return `${years} ${years === 1 ? "year" : "years"} ago`;
+    }
+    return "???";
+  };
+  const getReadableSize = (bytes) => {
+    const sizes = [
+      "B",
+      "KiB",
+      "MiB",
+      "GiB",
+      "TiB",
+      "PiB",
+      "EiB",
+      "ZiB",
+      "YiB",
+    ];
+    if (bytes > 0) {
+      const index = Math.floor(Math.log(bytes) / Math.log(1024));
+      return `${parseFloat((bytes / Math.pow(1024, index)).toFixed(1))} ${
+        sizes[index]
+      }`;
+    } else {
+      return "0 B";
+    }
+  };
   const path = useSelector((state) => state.path.currentPath);
   const clicked = (title) => {
     if (isFolder) {
-      const newPath=path===""?title:path.concat("/", title);
+      const newPath = path === "" ? title : path.concat("/", title);
       dispatch(setPath(newPath));
       dispatch(setIdle());
-    }
-    else{
-      console.log("Clicked")
+    } else {
+      console.log("Clicked");
     }
   };
 
@@ -64,7 +115,7 @@ const ContentItem = ({fName,isFolder}) => {
           display: "flex",
           width: "4%",
           justifyContent: "start",
-          alignItems:"center"
+          alignItems: "center",
           // paddingRight: "00px",
         }}
       >
@@ -85,10 +136,33 @@ const ContentItem = ({fName,isFolder}) => {
             alignItems: "center",
             justifyContent: "left",
             width: "43%",
-            overflow:"hidden"
+            overflow: "hidden",
           }}
         >
-          {isFolder?<span onClick={() => clicked(fName)} style={{display:"inline-flex", whiteSpace:"nowrap",cursor:"pointer"}}><BsFolderFill style={{alignSelf:"center"}}/> &nbsp; {fName}</span>:<span onClick={() => clicked(fName)} style={{display:"inline-flex", whiteSpace:"nowrap",cursor:"pointer"}}><BsFillFileEarmarkFill style={{alignSelf:"center"}}/> &nbsp; {fName}</span>}
+          {isFolder ? (
+            <span
+              onClick={() => clicked(fName)}
+              style={{
+                display: "inline-flex",
+                whiteSpace: "nowrap",
+                cursor: "pointer",
+              }}
+            >
+              <BsFolderFill style={{ alignSelf: "center" }} /> &nbsp; {fName}
+            </span>
+          ) : (
+            <span
+              onClick={() => clicked(fName)}
+              style={{
+                display: "inline-flex",
+                whiteSpace: "nowrap",
+                cursor: "pointer",
+              }}
+            >
+              <BsFillFileEarmarkFill style={{ alignSelf: "center" }} /> &nbsp;{" "}
+              {fName}
+            </span>
+          )}
           <div style={{ paddingLeft: "7px" }}></div>
         </div>
         <div
@@ -99,7 +173,7 @@ const ContentItem = ({fName,isFolder}) => {
             width: "20%",
           }}
         >
-          <div>Size</div>
+          <div>{getReadableSize(size)}</div>
           <div style={{ paddingLeft: "7px" }}></div>
         </div>
         <div
@@ -110,7 +184,7 @@ const ContentItem = ({fName,isFolder}) => {
             width: "35%",
           }}
         >
-          <div>Modified</div>
+          <div>{modTime(modified)}</div>
           <div style={{ paddingLeft: "7px" }}></div>
         </div>
       </div>
@@ -139,16 +213,24 @@ const ContentItem = ({fName,isFolder}) => {
           </Dropdown>
         </div>
       ) : (
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "right",
-          paddingLeft: "0px",
-          width: "6%",
-        }}>
-          <Button variant="light" style={{ background: "white" }}><BsDownload/></Button>
-          <Button variant="light" style={{ background: "white" }}><BiCopy/></Button>
-          <Button variant="light" style={{ background: "white" }}><RiDeleteBin6Line/></Button>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "right",
+            paddingLeft: "0px",
+            width: "6%",
+          }}
+        >
+          <Button variant="light" style={{ background: "white" }}>
+            <BsDownload />
+          </Button>
+          <Button variant="light" style={{ background: "white" }}>
+            <BiCopy />
+          </Button>
+          <Button variant="light" style={{ background: "white" }}>
+            <RiDeleteBin6Line />
+          </Button>
           <Dropdown>
             <Dropdown.Toggle as={CustomToggle} />
             <Dropdown.Menu size="sm" title="">
