@@ -4,12 +4,22 @@ import {useSelector,useDispatch} from "react-redux"
 import { changeView } from "../slices/viewSlice";
 import Button from 'react-bootstrap/Button';
 import { setSortAscending, setSortBy } from "../slices/sortSlice";
+import { resetSelected, selectAllItems } from "../slices/selectedSlice";
 const ContentsOptions = () => {
   const viewType=useSelector((state)=>state.view.listview)
   const dispatch=useDispatch();
   const sortedBy=useSelector((state)=>state.sortContent.sortBy)
   const sortAscending=useSelector((state)=>state.sortContent.sortAscending)
   const arrowType=sortAscending?<BsArrowUp/>:<BsArrowDown/>
+  const allSelected=useSelector((state)=>state.select.allSelected)
+  const selectAll=(e)=>{
+    if(e.target.checked){
+      dispatch(selectAllItems())
+    }
+    else{
+      dispatch(resetSelected())
+    }
+  }
   const clicked=(toSortBy)=>{
     if (sortedBy===toSortBy){
       dispatch(setSortAscending(!sortAscending))
@@ -39,7 +49,7 @@ const ContentsOptions = () => {
           // paddingRight: "00px",
         }}
       >
-        <input type="checkbox" />
+        <input type="checkbox" checked={allSelected} onChange={selectAll}/>
       </div>
       <div
         style={{

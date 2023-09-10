@@ -11,13 +11,14 @@ const ContentsActual = () => {
   const contents = useSelector((state) => state.contents.content);
   const status = useSelector((state) => state.contents.status);
   const error = useSelector((state) => state.contents.error);
+  const basePath=useSelector((state)=>state.path.basePath)
   const path = useSelector((state) => state.path.currentPath);
   const sortedBy = useSelector((state) => state.sortContent.sortBy);
   const sortAscending = useSelector((state) => state.sortContent.sortAscending);
   useEffect(() => {
     if (status === "idle") {
-      dispatch(getContents(path));
-      dispatch(getFolderSize(path));
+      dispatch(getContents({basePath,path}));
+      dispatch(getFolderSize({basePath,path}));
     }
   }, [status]);
   

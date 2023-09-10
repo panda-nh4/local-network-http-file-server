@@ -1,21 +1,34 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   BsFolderFill,
   BsDownload,
   BsThreeDotsVertical,
   BsFillFileEarmarkFill,
 } from "react-icons/bs";
-import { BiRename, BiCopy, BiCut } from "react-icons/bi";
+import { BiCopy } from "react-icons/bi";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import Dropdown from "react-bootstrap/Dropdown";
 import Button from "react-bootstrap/Button";
 import { useDispatch, useSelector } from "react-redux";
 import { setPath } from "../slices/pathSlice.js";
 import { setIdle } from "../slices/contentSlice.js";
+import { deselectOne, selectOne } from "../slices/selectedSlice.js";
 
-const ContentItem = ({ fName, isFolder, size, modified }) => {
+const ContentItem = ({ fName, isFolder, size, modified, selected }) => {
+  const payload = {
+    fName,
+    fSize: size,
+  };
+
   const dispatch = useDispatch();
+
   const curDate = new Date();
+  const selectedItems = useSelector((state) => state.select.selectedItems);
+  useEffect(() => {
+    if (selected && !selectedItems.includes(fName))
+      dispatch(selectOne(payload));
+  });
+
   const modTime = (mdate) => {
     const mDate = new Date(mdate);
     const diff = curDate.getTime() - mDate.getTime();
@@ -42,17 +55,7 @@ const ContentItem = ({ fName, isFolder, size, modified }) => {
     return "???";
   };
   const getReadableSize = (bytes) => {
-    const sizes = [
-      "B",
-      "KiB",
-      "MiB",
-      "GiB",
-      "TiB",
-      "PiB",
-      "EiB",
-      "ZiB",
-      "YiB",
-    ];
+    const sizes = ["B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
     if (bytes > 0) {
       const index = Math.floor(Math.log(bytes) / Math.log(1024));
       return `${parseFloat((bytes / Math.pow(1024, index)).toFixed(1))} ${
@@ -62,6 +65,13 @@ const ContentItem = ({ fName, isFolder, size, modified }) => {
       return "0 B";
     }
   };
+  const checkboxChange = (e) => {
+    if (e.target.checked) {
+      dispatch(selectOne(payload));
+    } else {
+      dispatch(deselectOne(payload));
+    }
+  };
   const path = useSelector((state) => state.path.currentPath);
   const clicked = (title) => {
     if (isFolder) {
@@ -69,7 +79,7 @@ const ContentItem = ({ fName, isFolder, size, modified }) => {
       dispatch(setPath(newPath));
       dispatch(setIdle());
     } else {
-      console.log("Clicked");
+      console.log("Clicked"); //Add code for file clicked
     }
   };
 
@@ -119,7 +129,11 @@ const ContentItem = ({ fName, isFolder, size, modified }) => {
           // paddingRight: "00px",
         }}
       >
-        <input type="checkbox" />
+        <input
+          type="checkbox"
+          onChange={checkboxChange}
+          checked={selectedItems.includes(fName)}
+        />
       </div>
       <div
         style={{

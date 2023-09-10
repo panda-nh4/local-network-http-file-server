@@ -9,6 +9,7 @@ const ContentList = ({ folders, files }) => {
   const sortAscending=useSelector((state)=>state.sortContent.sortAscending)
   var sortedFolders=[...folders]
   var sortedFiles=[...files]
+  const allSelected=useSelector((state)=>state.select.allSelected)
   const sortByModified=(fList)=>{
     fList.sort((a,b)=>{
       return new Date(a.mtime).getTime()-new Date(b.mtime).getTime()
@@ -55,10 +56,10 @@ const ContentList = ({ folders, files }) => {
   return (
     <div>
       {sortedFolders.map((_, idx) => (
-        <ContentItem key={idx} fName={_.fName} isFolder={true} size={_.actualSize} modified={_.mtime}/>
+        <ContentItem key={idx} fName={_.fName} isFolder={true} size={_.actualSize} modified={_.mtime} selected={allSelected}/>
       ))}
       {sortedFiles.map((_, idx) => (
-        <ContentItem key={idx} fName={_.fName} isFolder={false} size={_.size} modified={_.mtime}/>
+        <ContentItem key={idx} fName={_.fName} isFolder={false} size={_.size} modified={_.mtime} selected={allSelected}/>
       ))}
     </div>
   );

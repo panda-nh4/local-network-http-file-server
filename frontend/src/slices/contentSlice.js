@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { useDispatch } from "react-redux";
 
 const initialState = {
   content: [],
@@ -12,14 +11,14 @@ const initialState = {
 };
 
 const getContents = createAsyncThunk("contents/getContents", async (target) => {
-  const response = await axios.post("/dir/view", { dir: target });
+  const response = await axios.post("/dir/view", { base:target.basePath,dir: target.path });
   return response.data;
 });
 
 const getFolderSize = createAsyncThunk(
   "contents/getFolderSize",
   async (target) => {
-    const response = await axios.post("/dir/getSize", { dir: target });
+    const response = await axios.post("/dir/getSize", { base:target.basePath,dir: target.path });
     return response.data;
   }
 );
