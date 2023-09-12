@@ -19,12 +19,6 @@ const selectedSlice = createSlice({
       if (state.numberSelected === state.totalItems) {
         state.allSelected = true;
       }
-      console.log(
-        state.selectedItems,
-        state.selectedSize,
-        state.numberSelected,
-        state.allSelected
-      );
     },
     deselectOne: (state, action) => {
       state.selectedItems = state.selectedItems.filter((_) => {
@@ -34,12 +28,6 @@ const selectedSlice = createSlice({
       state.numberSelected -= 1;
       state.selectedSize -= action.payload.fSize;
       state.allSelected = false;
-      console.log(
-        state.selectedItems,
-        state.selectedSize,
-        state.numberSelected,
-        state.allSelected
-      );
     },
     setTotalItems: (state, action) => {
       state.totalItems = action.payload;

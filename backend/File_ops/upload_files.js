@@ -1,15 +1,11 @@
 import mv from "mv";
 import path from "path";
-import { fileURLToPath } from "url";
-import { dirname } from "path";
 import { check_exists } from "../Utils/fileUtils.js";
 import asyncHandler from "express-async-handler";
 const upload_files = asyncHandler(async (req, res) => {
   const upload_error = [];
   const success_upload = [];
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = dirname(__filename);
-  const base = path.join(__dirname, "..", "Files", "Users");
+  const base = req.actualPath;
 
   //   Takes in source dir, destination dir and filename
   const move_file = (src, initFname, dest, fname) => {
@@ -28,7 +24,7 @@ const upload_files = asyncHandler(async (req, res) => {
   const checknMove = async (f) => {
     const src = path.dirname(f.path);
     const fname = f.filename;
-    const dest = path.join(base, req.body.dest);
+    const dest = base;
     const ext = path.extname(fname);
     const new_name = path.basename(fname, ext) + "-Copy-" + Date.now() + ext;
     if (await check_exists(path.join(dest, fname))) {

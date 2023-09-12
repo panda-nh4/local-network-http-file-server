@@ -2,8 +2,8 @@ import {  createSlice } from "@reduxjs/toolkit";
 
 
 const initialState={
-    basePath:"",
-    currentPath: "TestFolder"
+    basePath:"media",
+    currentPath: ""
 }
 
 const pathSlice=createSlice({

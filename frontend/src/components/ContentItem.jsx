@@ -15,6 +15,9 @@ import { setIdle } from "../slices/contentSlice.js";
 import { deselectOne, selectOne } from "../slices/selectedSlice.js";
 
 const ContentItem = ({ fName, isFolder, size, modified, selected }) => {
+  const path = useSelector((state) => state.path.currentPath);
+  const fNameToShow=fName
+  fName=path.concat("/",fName)
   const payload = {
     fName,
     fSize: size,
@@ -72,7 +75,7 @@ const ContentItem = ({ fName, isFolder, size, modified, selected }) => {
       dispatch(deselectOne(payload));
     }
   };
-  const path = useSelector((state) => state.path.currentPath);
+
   const clicked = (title) => {
     if (isFolder) {
       const newPath = path === "" ? title : path.concat("/", title);
@@ -82,9 +85,8 @@ const ContentItem = ({ fName, isFolder, size, modified, selected }) => {
       console.log("Clicked"); //Add code for file clicked
     }
   };
-
   function useMediaQuery(query) {
-    const [matches, setMatches] = React.useState(false);
+    const [matches, setMatches] = React.useState(window.innerWidth>850);
     React.useEffect(() => {
       const matchQueryList = window.matchMedia(query);
       function handleChange(e) {
@@ -94,8 +96,7 @@ const ContentItem = ({ fName, isFolder, size, modified, selected }) => {
     }, [query]);
     return matches;
   }
-  let isDesktop = useMediaQuery("(min-width: 850px)");
-
+  let isDesktop = useMediaQuery("(min-width: 850px)");  
   const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
     <a
       href=""
@@ -155,18 +156,18 @@ const ContentItem = ({ fName, isFolder, size, modified, selected }) => {
         >
           {isFolder ? (
             <span
-              onClick={() => clicked(fName)}
+              onClick={() => clicked(fNameToShow)}
               style={{
                 display: "inline-flex",
                 whiteSpace: "nowrap",
                 cursor: "pointer",
               }}
             >
-              <BsFolderFill style={{ alignSelf: "center" }} /> &nbsp; {fName}
+              <BsFolderFill style={{ alignSelf: "center" }} /> &nbsp;{" "}{fNameToShow}
             </span>
           ) : (
             <span
-              onClick={() => clicked(fName)}
+              onClick={() => clicked(fNameToShow)}
               style={{
                 display: "inline-flex",
                 whiteSpace: "nowrap",
@@ -174,7 +175,7 @@ const ContentItem = ({ fName, isFolder, size, modified, selected }) => {
               }}
             >
               <BsFillFileEarmarkFill style={{ alignSelf: "center" }} /> &nbsp;{" "}
-              {fName}
+              {fNameToShow}
             </span>
           )}
           <div style={{ paddingLeft: "7px" }}></div>

@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useEffect} from "react";
 import Card from "react-bootstrap/Card";
 import Dropdown from "react-bootstrap/Dropdown";
 import { BsThreeDotsVertical } from "react-icons/bs";
@@ -7,10 +7,18 @@ import folderIcon from "../assets/folder-svgrepo-com.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { setPath } from "../slices/pathSlice.js";
 import { setIdle } from "../slices/contentSlice.js";
-const CardItem = ({ fName, isFolder, size, modified }) => {
+import { deselectOne, selectOne } from "../slices/selectedSlice.js";
+const CardItem = ({ fName, isFolder, size, modified,selected }) => {
   const iconSrc = isFolder ? folderIcon : fileIcon;
   const dispatch = useDispatch();
   const path = useSelector((state) => state.path.currentPath);
+  const selectedItems = useSelector((state) => state.select.selectedItems);
+  const fNameToShow = fName;
+  fName = path.concat("/", fName);
+  const payload = {
+    fName,
+    fSize: size,
+  };
   const curDate = new Date();
   const modTime = (mdate) => {
     const mDate = new Date(mdate);
@@ -38,17 +46,7 @@ const CardItem = ({ fName, isFolder, size, modified }) => {
     return "???";
   };
   const getReadableSize = (bytes) => {
-    const sizes = [
-      "B",
-      "KiB",
-      "MiB",
-      "GiB",
-      "TiB",
-      "PiB",
-      "EiB",
-      "ZiB",
-      "YiB",
-    ];
+    const sizes = ["B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
     if (bytes > 0) {
       const index = Math.floor(Math.log(bytes) / Math.log(1024));
       return `${parseFloat((bytes / Math.pow(1024, index)).toFixed(2))} ${
@@ -82,24 +80,41 @@ const CardItem = ({ fName, isFolder, size, modified }) => {
       console.log("Clicked");
     }
   };
+  useEffect(() => {
+    if (selected && !selectedItems.includes(fName))
+      dispatch(selectOne(payload));
+  });
+  const checkboxChange = (e) => {
+    if (e.target.checked) {
+      dispatch(selectOne(payload));
+    } else {
+      dispatch(deselectOne(payload));
+    }
+  };
   return (
     <Card style={{ width: "11rem", height: "18rem" }} bg="dark">
       <Card.Img
         variant="top"
         src={iconSrc}
         style={{ cursor: "pointer" }}
-        onClick={() => clicked(fName)}
+        onClick={() => clicked(fNameToShow)}
       />
       <Card.Body>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <Card.Title
             style={{ color: "white", cursor: "pointer" }}
-            onClick={() => clicked(fName)}
+            onClick={() => clicked(fNameToShow)}
           >
-            {fName.length > 12 ? fName.slice(0, 10).concat("...") : fName}
+            {fNameToShow.length > 12
+              ? fNameToShow.slice(0, 10).concat("...")
+              : fNameToShow}
           </Card.Title>
           <div style={{ justifyContent: "center", alignItems: "center" }}>
-            <input type="checkbox" />
+            <input
+              type="checkbox"
+              onChange={checkboxChange}
+              checked={selectedItems.includes(fName)}
+            />
           </div>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between" }}>

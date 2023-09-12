@@ -9,6 +9,7 @@ import { resetSelected } from "../slices/selectedSlice.js";
 const CurrentLocation = () => {
   const dispatch = useDispatch();
   const path = useSelector((state) => state.path.currentPath);
+  const root = useSelector((state) => state.path.basePath);
   useEffect(() => {
     dispatch(resetSelected());
   });
@@ -34,7 +35,7 @@ const CurrentLocation = () => {
                 overflow: "hidden",
               }}
             >
-              Root
+              {root}
             </span>
           </Button>
         </StyledBreadcrumbItem>

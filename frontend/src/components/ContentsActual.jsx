@@ -13,8 +13,6 @@ const ContentsActual = () => {
   const error = useSelector((state) => state.contents.error);
   const basePath=useSelector((state)=>state.path.basePath)
   const path = useSelector((state) => state.path.currentPath);
-  const sortedBy = useSelector((state) => state.sortContent.sortBy);
-  const sortAscending = useSelector((state) => state.sortContent.sortAscending);
   useEffect(() => {
     if (status === "idle") {
       dispatch(getContents({basePath,path}));

@@ -8,17 +8,18 @@ import search_file from "../Directory_ops/search_file.js";
 import zip_dir from "../Directory_ops/download_dir.js";
 import express from "express";
 import get_dir_size from "../Directory_ops/get_size.js";
+import { matchLocation } from "../Middleware/locationMatcher.js";
 
-const router=express.Router();
+const router = express.Router();
 
-router.post("/copy",copy_dir)
-router.post("/create",create_dir)
-router.post("/delete",delete_dir)
-router.post('/info',get_dir_info)
-router.post('/view',get_dir_contents)
-router.post('/move',move_dir)
-router.post('/download',zip_dir)
-router.post('/search',search_file)
-router.post('/getSize',get_dir_size)
+router.post("/copy", copy_dir);
+router.post("/create", matchLocation, create_dir);
+router.post("/delete", delete_dir);
+router.post("/info", matchLocation, get_dir_info);
+router.post("/view", matchLocation, get_dir_contents);
+router.post("/move", move_dir);
+router.post("/download", matchLocation, zip_dir);
+router.post("/search", matchLocation, search_file);
+router.post("/getSize", matchLocation, get_dir_size);
 
 export default router;

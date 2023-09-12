@@ -8,7 +8,7 @@ const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = dirname(__filename);
-    const dest = path.join(__dirname,"..","Files","Users","temp");
+    const dest = path.join(__dirname,"..","temp");
     cb(null, dest);
   },
   filename: (req, file, cb) => {

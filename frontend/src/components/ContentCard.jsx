@@ -4,6 +4,7 @@ import CardItem from "./CardItem";
 const ContentCard = ({ folders, files }) => {
   const sortedBy = useSelector((state) => state.sortContent.sortBy);
   const sortAscending = useSelector((state) => state.sortContent.sortAscending);
+  const allSelected=useSelector((state)=>state.select.allSelected)
   var sortedFolders = [...folders];
   var sortedFiles = [...files];
   const sortByModified = (fList) => {
@@ -75,7 +76,7 @@ const ContentCard = ({ folders, files }) => {
               key={idx}
               style={{ display: "flex", justifyContent: "center" }}
             >
-              <CardItem fName={_.fName} isFolder={true} size={_.actualSize} modified={_.mtime} />
+              <CardItem fName={_.fName} isFolder={true} size={_.actualSize} modified={_.mtime} selected={allSelected} />
             </div>
           ))}
           {sortedFiles.map((_, idx) => (
@@ -84,7 +85,7 @@ const ContentCard = ({ folders, files }) => {
               key={idx}
               style={{ display: "flex", justifyContent: "center" }}
             >
-              <CardItem fName={_.fName} isFolder={false} size={_.size} modified={_.mtime} />
+              <CardItem fName={_.fName} isFolder={false} size={_.size} modified={_.mtime} selected={allSelected} />
             </div>
           ))}
         </div>

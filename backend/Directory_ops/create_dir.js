@@ -1,14 +1,9 @@
 import fs from "fs";
 import path from "path";
-import { fileURLToPath } from "url";
-import { dirname } from "path";
 import asyncHandler from "express-async-handler";
 
 const create_dir = asyncHandler( async(req, res) => {
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = dirname(__filename);
-  const base = path.join(__dirname, "..", "Files", "Users");
-  const dirPath = path.join(base, req.body.dir);
+  const dirPath = req.actualPath
   fs.access(dirPath,(err)=>{
     if (!err){
       fs.mkdir(path.join(dirPath,req.body.name),(err)=>{
