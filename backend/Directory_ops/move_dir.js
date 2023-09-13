@@ -13,8 +13,8 @@ const move_dir = asyncHandler(async (req, res) => {
 
   const mapfun = async (srcPath) => {
     try {
-      const src = path.join(base, srcPath.src);
-      const destPath = path.join(base, srcPath.dest);
+      const src = srcPath.srcDir;
+      const destPath = srcPath.destDir;
       await fse.move(src, destPath);
       dirs_moved.push(srcPath.src);
     } catch (err){
@@ -23,7 +23,7 @@ const move_dir = asyncHandler(async (req, res) => {
     }
   };
 
-  await Promise.all(req.body.map(mapfun)).then(() => {
+  await Promise.all(req.actualPathObjs.map(mapfun)).then(() => {
     res.status(200).json({ dirs_moved, dirs_notmoved });
   });
 });

@@ -8,15 +8,15 @@ const delete_dir = asyncHandler(async (req, res) => {
   const successfullyDeleted = [];
   const unableToDelete = [];
   const doesNotExist = [];
-  const dirs = req.body.dirs;
-  const delOne = async ({ dir }) => {
-    if (dir === "") {
+  const dirs = req.actualPathObjs;
+  const delOne = async ({ dir, fname, objDir }) => {
+    if (objDir === "") {
       unableToDelete.push(dir);
     } else {
       const __filename = fileURLToPath(import.meta.url);
       const __dirname = dirname(__filename);
       const base = path.join(__dirname, "..", "Files", "Users");
-      const dirPath = path.join(base, dir);
+      const dirPath = dir;
       try {
         await fs.promises.access(dirPath);
         try {
