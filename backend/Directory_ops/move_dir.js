@@ -16,10 +16,10 @@ const move_dir = asyncHandler(async (req, res) => {
       const src = srcPath.srcDir;
       const destPath = srcPath.destDir;
       await fse.move(src, destPath);
-      dirs_moved.push(srcPath.src);
+      dirs_moved.push(srcPath.srcDir);
     } catch (err){
       console.log(err)
-      dirs_notmoved.push(srcPath.src);
+      dirs_notmoved.push(srcPath.srcDir);
     }
   };
 

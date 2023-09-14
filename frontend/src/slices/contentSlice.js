@@ -11,18 +11,23 @@ const initialState = {
 };
 
 const getContents = createAsyncThunk("contents/getContents", async (target) => {
-  const response = await axios.post("/dir/view", { base:target.basePath,dir: target.path });
+  const response = await axios.post("/dir/view", {
+    base: target.basePath,
+    dir: target.path,
+  });
   return response.data;
 });
 
 const getFolderSize = createAsyncThunk(
   "contents/getFolderSize",
   async (target) => {
-    const response = await axios.post("/dir/getSize", { base:target.basePath,dir: target.path });
+    const response = await axios.post("/dir/getSize", {
+      base: target.basePath,
+      dir: target.path,
+    });
     return response.data;
   }
 );
-
 
 const contentSlice = createSlice({
   name: "content",
@@ -31,13 +36,13 @@ const contentSlice = createSlice({
     setIdle: (state) => {
       state.status = "idle";
     },
-    resetContentSizes:(state)=>{
-      state.contentSizes= {
+    resetContentSizes: (state) => {
+      state.contentSizes = {
         status: "idle",
         folders: [],
         files: [],
-      }
-    }
+      };
+    },
   },
   extraReducers(builder) {
     builder
@@ -86,5 +91,5 @@ const contentSlice = createSlice({
 });
 
 export { getContents, getFolderSize };
-export const { setIdle ,resetContentSizes} = contentSlice.actions;
+export const { setIdle, resetContentSizes } = contentSlice.actions;
 export default contentSlice.reducer;

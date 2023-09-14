@@ -4,6 +4,7 @@ import pathReducer from "./slices/pathSlice";
 import contentReducer from "./slices/contentSlice";
 import sortReducer from "./slices/sortSlice";
 import selectedReducer from "./slices/selectedSlice";
+import locationsReducer from "./slices/locationsSlice";
 
 const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ const store = configureStore({
     contents: contentReducer,
     sortContent: sortReducer,
     select: selectedReducer,
+    location: locationsReducer,
   },
   // middleware:(getDefaultMiddleware)=>{getDefaultMiddleware()},
   devTools: true,

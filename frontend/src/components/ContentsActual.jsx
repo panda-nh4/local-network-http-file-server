@@ -14,11 +14,11 @@ const ContentsActual = () => {
   const basePath=useSelector((state)=>state.path.basePath)
   const path = useSelector((state) => state.path.currentPath);
   useEffect(() => {
-    if (status === "idle") {
+    if (status === "idle" && basePath!=="") {
       dispatch(getContents({basePath,path}));
       dispatch(getFolderSize({basePath,path}));
     }
-  }, [status]);
+  }, [status,basePath]);
   
   let contentfrag;
   if (status === "loading") {

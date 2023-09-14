@@ -2,7 +2,7 @@ import {  createSlice } from "@reduxjs/toolkit";
 
 
 const initialState={
-    basePath:"media",
+    basePath:"",
     currentPath: ""
 }
 
@@ -15,10 +15,11 @@ const pathSlice=createSlice({
         },
         setBasePath:(state,action)=>{
             state.basePath=action.payload
+            state.currentPath=""
         }
     }
 })
 
 
-export const {setPath} =pathSlice.actions;
+export const {setPath,setBasePath} =pathSlice.actions;
 export default pathSlice.reducer;

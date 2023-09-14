@@ -1,4 +1,4 @@
-import React,{useEffect} from "react";
+import React, { useEffect } from "react";
 import Card from "react-bootstrap/Card";
 import Dropdown from "react-bootstrap/Dropdown";
 import { BsThreeDotsVertical } from "react-icons/bs";
@@ -8,16 +8,26 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPath } from "../slices/pathSlice.js";
 import { setIdle } from "../slices/contentSlice.js";
 import { deselectOne, selectOne } from "../slices/selectedSlice.js";
-const CardItem = ({ fName, isFolder, size, modified,selected }) => {
+const CardItem = ({ fName, isFolder, size, modified, selected }) => {
   const iconSrc = isFolder ? folderIcon : fileIcon;
   const dispatch = useDispatch();
   const path = useSelector((state) => state.path.currentPath);
+  const basePath = useSelector((state) => state.path.basePath);
   const selectedItems = useSelector((state) => state.select.selectedItems);
   const fNameToShow = fName;
   fName = path.concat("/", fName);
   const payload = {
     fName,
     fSize: size,
+  };
+  const qParams = new URLSearchParams();
+  qParams.set("base", basePath);
+  qParams.set("dir", path);
+  qParams.set("fname", fNameToShow);
+  const url = "/file/download?" + qParams;
+  const downloadFile = () => {
+    const newWindow = window.open(url, "_self", "noopener,noreferrer");
+    if (newWindow) newWindow.opener = null;
   };
   const curDate = new Date();
   const modTime = (mdate) => {
@@ -128,7 +138,9 @@ const CardItem = ({ fName, isFolder, size, modified,selected }) => {
               <Dropdown.Toggle as={CustomToggle} />
               <Dropdown.Menu size="sm" title="">
                 {/* <Dropdown.Header>Options</Dropdown.Header> */}
-                <Dropdown.Item>Download</Dropdown.Item>
+                <Dropdown.Item onClick={() => downloadFile()}>
+                  Download
+                </Dropdown.Item>
                 <Dropdown.Item>Rename</Dropdown.Item>
                 <Dropdown.Item>Copy</Dropdown.Item>
                 <Dropdown.Item>Move</Dropdown.Item>

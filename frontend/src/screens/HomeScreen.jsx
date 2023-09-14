@@ -4,10 +4,11 @@ import Contents from "../components/Contents";
 import CurrentLocation from "../components/CurrentLocation";
 import { Fab, Action } from "react-tiny-fab";
 import "react-tiny-fab/dist/styles.css";
-import {BsPlusLg,BsFolderPlus,BsUpload} from 'react-icons/bs'
+import { BsPlusLg, BsFolderPlus, BsUpload } from "react-icons/bs";
+
 const HomeScreen = () => {
   return (
-    <div style={{paddingBottom:"1%"}}>
+    <div style={{ paddingBottom: "1%" }}>
       <Header />
       <CurrentLocation />
       <Contents />

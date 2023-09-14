@@ -20,7 +20,7 @@ router.post("/delete", matchLocationArray, delete_files);
 router.get("/info", matchLocation, get_file_info);
 router.post("/move", matchLocations, move_files);
 router.post("/upload", uploadMiddleware, matchLocation, upload_files);
-router.get("/download", matchLocation, download_file);
+router.get("/download", download_file);
 router.post("/rename", matchLocation, renameFile);
 
 export default router;

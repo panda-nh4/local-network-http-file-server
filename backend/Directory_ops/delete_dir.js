@@ -13,9 +13,6 @@ const delete_dir = asyncHandler(async (req, res) => {
     if (objDir === "") {
       unableToDelete.push(dir);
     } else {
-      const __filename = fileURLToPath(import.meta.url);
-      const __dirname = dirname(__filename);
-      const base = path.join(__dirname, "..", "Files", "Users");
       const dirPath = dir;
       try {
         await fs.promises.access(dirPath);

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   BsFolderFill,
   BsDownload,
@@ -13,25 +13,35 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPath } from "../slices/pathSlice.js";
 import { setIdle } from "../slices/contentSlice.js";
 import { deselectOne, selectOne } from "../slices/selectedSlice.js";
-
+import axios from "axios";
 const ContentItem = ({ fName, isFolder, size, modified, selected }) => {
   const path = useSelector((state) => state.path.currentPath);
-  const fNameToShow=fName
-  fName=path.concat("/",fName)
+  const basePath = useSelector((state) => state.path.basePath);
+  const fNameToShow = fName;
+  fName = path.concat("/", fName);
   const payload = {
     fName,
     fSize: size,
   };
-
+  const qParams=new URLSearchParams();
+  qParams.set("base",basePath)
+  qParams.set("dir",path)
+  qParams.set("fname",fNameToShow)
   const dispatch = useDispatch();
-
+  const url="/file/download?"+qParams
+  const downloadFile = () => {
+    const newWindow = window.open(url,"_self", "noopener,noreferrer");
+    if (newWindow) newWindow.opener = null;
+  };
   const curDate = new Date();
   const selectedItems = useSelector((state) => state.select.selectedItems);
   useEffect(() => {
     if (selected && !selectedItems.includes(fName))
       dispatch(selectOne(payload));
   });
+  const widthPartitionDesktop={
 
+  }
   const modTime = (mdate) => {
     const mDate = new Date(mdate);
     const diff = curDate.getTime() - mDate.getTime();
@@ -86,7 +96,7 @@ const ContentItem = ({ fName, isFolder, size, modified, selected }) => {
     }
   };
   function useMediaQuery(query) {
-    const [matches, setMatches] = React.useState(window.innerWidth>850);
+    const [matches, setMatches] = React.useState(window.innerWidth > 850);
     React.useEffect(() => {
       const matchQueryList = window.matchMedia(query);
       function handleChange(e) {
@@ -96,7 +106,8 @@ const ContentItem = ({ fName, isFolder, size, modified, selected }) => {
     }, [query]);
     return matches;
   }
-  let isDesktop = useMediaQuery("(min-width: 850px)");  
+  let isDesktop = useMediaQuery("(min-width: 850px)");
+  var fontSize=isDesktop?'18px':'10px'
   const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
     <a
       href=""
@@ -119,6 +130,8 @@ const ContentItem = ({ fName, isFolder, size, modified, selected }) => {
         justifyContent: "space-between",
         paddingRight: "3%",
         paddingLeft: "3%",
+        fontSize:fontSize,
+        paddingTop:"2px"
       }}
     >
       <div
@@ -147,8 +160,8 @@ const ContentItem = ({ fName, isFolder, size, modified, selected }) => {
       >
         <div
           style={{
-            display: "inline",
-            alignItems: "center",
+            display: "inline-flex",
+            alignItems:"center",
             justifyContent: "left",
             width: "43%",
             overflow: "hidden",
@@ -163,7 +176,8 @@ const ContentItem = ({ fName, isFolder, size, modified, selected }) => {
                 cursor: "pointer",
               }}
             >
-              <BsFolderFill style={{ alignSelf: "center" }} /> &nbsp;{" "}{fNameToShow}
+              <BsFolderFill style={{ alignSelf: "center" }} /> &nbsp;{" "}
+              {fNameToShow}
             </span>
           ) : (
             <span
@@ -185,7 +199,7 @@ const ContentItem = ({ fName, isFolder, size, modified, selected }) => {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            width: "20%",
+            width: "25%",
           }}
         >
           <div>{getReadableSize(size)}</div>
@@ -196,7 +210,7 @@ const ContentItem = ({ fName, isFolder, size, modified, selected }) => {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            width: "35%",
+            width: "30%",
           }}
         >
           <div>{modTime(modified)}</div>
@@ -218,7 +232,7 @@ const ContentItem = ({ fName, isFolder, size, modified, selected }) => {
             <Dropdown.Toggle as={CustomToggle} />
             <Dropdown.Menu size="sm" title="">
               {/* <Dropdown.Header>Options</Dropdown.Header> */}
-              <Dropdown.Item>Download</Dropdown.Item>
+              <Dropdown.Item onClick={() => downloadFile()} >Download</Dropdown.Item>
               <Dropdown.Item>Rename</Dropdown.Item>
               <Dropdown.Item>Copy</Dropdown.Item>
               <Dropdown.Item>Move</Dropdown.Item>
@@ -237,7 +251,7 @@ const ContentItem = ({ fName, isFolder, size, modified, selected }) => {
             width: "6%",
           }}
         >
-          <Button variant="light" style={{ background: "white" }}>
+          <Button variant="light" style={{ background: "white" }} onClick={() => downloadFile()} >
             <BsDownload />
           </Button>
           <Button variant="light" style={{ background: "white" }}>
