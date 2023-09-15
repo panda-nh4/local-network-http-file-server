@@ -6,6 +6,7 @@ import sortReducer from "./slices/sortSlice";
 import selectedReducer from "./slices/selectedSlice";
 import locationsReducer from "./slices/locationsSlice";
 import overlayReducer from "./slices/overLaySlice";
+import renameReducer from "./slices/renameSlice";
 
 const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ const store = configureStore({
     select: selectedReducer,
     location: locationsReducer,
     overlay: overlayReducer,
+    rename: renameReducer,
   },
   // middleware:(getDefaultMiddleware)=>{getDefaultMiddleware()},
   devTools: true,

@@ -8,8 +8,9 @@ import { BsPlusLg, BsFolderPlus, BsUpload } from "react-icons/bs";
 import RenameComponent from "../components/RenameComponent";
 const HomeScreen = () => {
   return (
-    <div style={{}}>
-      <div style={{paddingBottom:"100px"}}>
+    <div >
+
+      <div style={{ paddingBottom: "100px" }}>
         <RenameComponent />
         <Header />
         <CurrentLocation />
@@ -31,6 +32,7 @@ const HomeScreen = () => {
           <BsUpload />
         </Action>
       </Fab>
+
     </div>
   );
 };
