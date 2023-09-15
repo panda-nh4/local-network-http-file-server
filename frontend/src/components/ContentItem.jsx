@@ -14,6 +14,7 @@ import { setPath } from "../slices/pathSlice.js";
 import { setIdle } from "../slices/contentSlice.js";
 import { deselectOne, selectOne } from "../slices/selectedSlice.js";
 import axios from "axios";
+import { setHidden, setRename } from "../slices/overLaySlice.js";
 const ContentItem = ({ fName, isFolder, size, modified, selected }) => {
   const path = useSelector((state) => state.path.currentPath);
   const basePath = useSelector((state) => state.path.basePath);
@@ -39,8 +40,9 @@ const ContentItem = ({ fName, isFolder, size, modified, selected }) => {
     if (selected && !selectedItems.includes(fName))
       dispatch(selectOne(payload));
   });
-  const widthPartitionDesktop={
-
+  const rename=()=>{
+    dispatch(setRename({type:"Rename",isFolder,fName:fNameToShow}))
+    dispatch(setHidden(false))
   }
   const modTime = (mdate) => {
     const mDate = new Date(mdate);
@@ -107,7 +109,7 @@ const ContentItem = ({ fName, isFolder, size, modified, selected }) => {
     return matches;
   }
   let isDesktop = useMediaQuery("(min-width: 850px)");
-  var fontSize=isDesktop?'18px':'10px'
+  var fontSize=isDesktop?'18px':'12px'
   const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
     <a
       href=""
@@ -233,7 +235,7 @@ const ContentItem = ({ fName, isFolder, size, modified, selected }) => {
             <Dropdown.Menu size="sm" title="">
               {/* <Dropdown.Header>Options</Dropdown.Header> */}
               <Dropdown.Item onClick={() => downloadFile()} >Download</Dropdown.Item>
-              <Dropdown.Item>Rename</Dropdown.Item>
+              <Dropdown.Item onClick={()=>rename()}>Rename</Dropdown.Item>
               <Dropdown.Item>Copy</Dropdown.Item>
               <Dropdown.Item>Move</Dropdown.Item>
               <Dropdown.Item>Delete</Dropdown.Item>
@@ -264,7 +266,7 @@ const ContentItem = ({ fName, isFolder, size, modified, selected }) => {
             <Dropdown.Toggle as={CustomToggle} />
             <Dropdown.Menu size="sm" title="">
               {/* <Dropdown.Header>Options</Dropdown.Header> */}
-              <Dropdown.Item>Rename</Dropdown.Item>
+              <Dropdown.Item onClick={()=>rename()}>Rename</Dropdown.Item>
               <Dropdown.Item>Move</Dropdown.Item>
               <Dropdown.Item>Properties</Dropdown.Item>
             </Dropdown.Menu>

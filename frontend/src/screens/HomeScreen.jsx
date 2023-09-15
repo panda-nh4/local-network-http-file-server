@@ -5,17 +5,20 @@ import CurrentLocation from "../components/CurrentLocation";
 import { Fab, Action } from "react-tiny-fab";
 import "react-tiny-fab/dist/styles.css";
 import { BsPlusLg, BsFolderPlus, BsUpload } from "react-icons/bs";
-
+import RenameComponent from "../components/RenameComponent";
 const HomeScreen = () => {
   return (
-    <div style={{ paddingBottom: "1%" }}>
-      <Header />
-      <CurrentLocation />
-      <Contents />
+    <div style={{}}>
+      <div style={{paddingBottom:"100px"}}>
+        <RenameComponent />
+        <Header />
+        <CurrentLocation />
+        <Contents />
+      </div>
       <Fab
         mainButtonStyles={{ background: "#212529" }}
         // actionButtonStyles={actionButtonStyles}
-        style={{ bottom: "24px", right: "0px" }}
+        style={{ bottom: "15px", right: "17px" }}
         icon={<BsPlusLg />}
         event="click"
         // alwaysShowTitle={true}
