@@ -101,6 +101,7 @@ const ContentCard = ({ folders, files }) => {
                 size={_.size}
                 modified={_.mtime}
                 selected={allSelected}
+                showOptions={showOptions}
               />
             </div>
           ))}

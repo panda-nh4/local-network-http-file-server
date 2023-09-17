@@ -10,17 +10,18 @@ const delete_dir = asyncHandler(async (req, res) => {
   const doesNotExist = [];
   const dirs = req.actualPathObjs;
   const delOne = async ({ dir, fname, objDir }) => {
-    if (objDir === "") {
-      unableToDelete.push(dir);
+    console.log("Dir: ",dir,"Objdir: ",objDir,fname)
+    if (objDir === "" && fname==="") {
+      unableToDelete.push(fname);
     } else {
-      const dirPath = dir;
+      const dirPath = path.join(dir,fname);
       try {
         await fs.promises.access(dirPath);
         try {
           await fs.promises.rm(dirPath, { recursive: true, force: true });
-          successfullyDeleted.push(dir);
+          successfullyDeleted.push(fname);
         } catch {
-          unableToDelete.push(dir);
+          unableToDelete.push(fname);
         }
       } catch {
         doesNotExist.push(dir);

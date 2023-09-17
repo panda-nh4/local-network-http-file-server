@@ -8,7 +8,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPath } from "../slices/pathSlice.js";
 import { setIdle } from "../slices/contentSlice.js";
 import { deselectOne, selectOne } from "../slices/selectedSlice.js";
-const CardItem = ({ fName, isFolder, size, modified, selected, showOptions }) => {
+import { setHidden, setRename, setDeleteOne } from "../slices/overLaySlice.js";
+const CardItem = ({
+  fName,
+  isFolder,
+  size,
+  modified,
+  selected,
+  showOptions,
+}) => {
   const iconSrc = isFolder ? folderIcon : fileIcon;
   const dispatch = useDispatch();
   const path = useSelector((state) => state.path.currentPath);
@@ -28,6 +36,14 @@ const CardItem = ({ fName, isFolder, size, modified, selected, showOptions }) =>
   const downloadFile = () => {
     const newWindow = window.open(url, "_self", "noopener,noreferrer");
     if (newWindow) newWindow.opener = null;
+  };
+  const deleteItem = () => {
+    dispatch(setDeleteOne({ type: "DeleteOne", isFolder, fName: fNameToShow }));
+    dispatch(setHidden(false));
+  };
+  const rename = () => {
+    dispatch(setRename({ type: "Rename", isFolder, fName: fNameToShow }));
+    dispatch(setHidden(false));
   };
   const curDate = new Date();
   const modTime = (mdate) => {
@@ -134,17 +150,19 @@ const CardItem = ({ fName, isFolder, size, modified, selected, showOptions }) =>
             {modTime(modified)}
           </Card.Text>
           <div style={{ display: "flex", alignItems: "center" }}>
-            <Dropdown style={{display:showOptions?"":"none"}}>
+            <Dropdown style={{ display: showOptions ? "": "none" }}>
               <Dropdown.Toggle as={CustomToggle} />
               <Dropdown.Menu size="sm" title="">
                 {/* <Dropdown.Header>Options</Dropdown.Header> */}
                 <Dropdown.Item onClick={() => downloadFile()}>
                   Download
                 </Dropdown.Item>
-                <Dropdown.Item>Rename</Dropdown.Item>
+                <Dropdown.Item onClick={()=>rename()}>Rename</Dropdown.Item>
                 <Dropdown.Item>Copy</Dropdown.Item>
                 <Dropdown.Item>Move</Dropdown.Item>
-                <Dropdown.Item>Delete</Dropdown.Item>
+                <Dropdown.Item onClick={() => deleteItem()}>
+                  Delete
+                </Dropdown.Item>
                 <Dropdown.Item>Properties</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>

@@ -21,7 +21,7 @@ const renameFile = asyncHandler(async (req, res) => {
   };
 
   if (await check_exists(path.join(dirPath, req.body.newName))) {
-    res.status(401).json("File name already exists.");
+    res.status(200).json({err:"File name already exists."});
   } else {
     await move_file(dirPath, req.body.fname, dirPath, req.body.newName).then(
       () => {

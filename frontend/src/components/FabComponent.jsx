@@ -5,9 +5,15 @@ import "react-tiny-fab/dist/styles.css";
 import { BiCopy,BiCut } from "react-icons/bi";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import {CgMoreO} from 'react-icons/cg'
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setHidden, setNewDir } from "../slices/overLaySlice";
 const FabComponent = () => {
   const selectedF = useSelector((state) => state.select.numberSelected);
+  const dispatch=useDispatch()
+  const createFolder=()=>{
+    dispatch(setNewDir({type:"Create"}))
+    dispatch(setHidden(false))
+  }
   const fabContents =
     selectedF === 0 ? (
       <Fab
@@ -20,7 +26,7 @@ const FabComponent = () => {
         // onClick={someFunctionForTheMainButton}
       >
         <Action text="Make new folder" style={{ background: "#313539" }}>
-          <BsFolderPlus />
+          <BsFolderPlus onClick={()=>createFolder()} />
         </Action>
         <Action text="Upload files" style={{ background: "#313539" }}>
           <BsUpload />

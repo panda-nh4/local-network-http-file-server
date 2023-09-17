@@ -14,7 +14,7 @@ import { setPath } from "../slices/pathSlice.js";
 import { setIdle } from "../slices/contentSlice.js";
 import { deselectOne, selectOne } from "../slices/selectedSlice.js";
 import axios from "axios";
-import { setHidden, setRename } from "../slices/overLaySlice.js";
+import { setHidden, setRename, setDeleteOne } from "../slices/overLaySlice.js";
 const ContentItem = ({
   fName,
   isFolder,
@@ -49,6 +49,10 @@ const ContentItem = ({
   });
   const rename = () => {
     dispatch(setRename({ type: "Rename", isFolder, fName: fNameToShow }));
+    dispatch(setHidden(false));
+  };
+  const deleteItem = () => {
+    dispatch(setDeleteOne({ type: "DeleteOne", isFolder, fName: fNameToShow }));
     dispatch(setHidden(false));
   };
   const modTime = (mdate) => {
@@ -235,7 +239,7 @@ const ContentItem = ({
             justifyContent: "right",
             paddingLeft: "0px",
             width: "6%",
-            height:"38px"
+            height: "38px",
           }}
         >
           {showOptions ? (
@@ -246,10 +250,12 @@ const ContentItem = ({
                 <Dropdown.Item onClick={() => downloadFile()}>
                   Download
                 </Dropdown.Item>
-                <Dropdown.Item onClick={() => rename()}>Rename</Dropdown.Item>
+                <Dropdown.Item onClick={() => rename()}> Rename </Dropdown.Item>
                 <Dropdown.Item>Copy</Dropdown.Item>
                 <Dropdown.Item>Move</Dropdown.Item>
-                <Dropdown.Item>Delete</Dropdown.Item>
+                <Dropdown.Item onClick={() => deleteItem()}>
+                  Delete
+                </Dropdown.Item>
                 <Dropdown.Item>Properties</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
@@ -265,7 +271,7 @@ const ContentItem = ({
             justifyContent: "right",
             paddingLeft: "0px",
             width: "6%",
-            height:"38px"
+            height: "38px",
           }}
         >
           <Button
@@ -278,7 +284,11 @@ const ContentItem = ({
           <Button variant="light" style={{ background: "white" }}>
             <BiCopy />
           </Button>
-          <Button variant="light" style={{ background: "white" }}>
+          <Button
+            variant="light"
+            style={{ background: "white" }}
+            onClick={() => deleteItem()}
+          >
             <RiDeleteBin6Line />
           </Button>
           <Dropdown>
@@ -299,7 +309,7 @@ const ContentItem = ({
             justifyContent: "right",
             paddingLeft: "0px",
             width: "6%",
-            height:"38px"
+            height: "38px",
           }}
         ></div>
       )}

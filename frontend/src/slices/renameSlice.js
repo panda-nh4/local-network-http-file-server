@@ -33,11 +33,14 @@ const renameSlice = createSlice({
     builder.addCase(renameF.pending, (state) => {
         state.status="loading"
     }).addCase(renameF.fulfilled,(state,action)=>{
+       if (action.payload.err){
+        toast.warn("Could not rename: ".concat(action.payload.err))
+       }else{
         state.status="success"
-        toast.success("Renamed successfully")
+        toast.success("Renamed successfully")}
     }).addCase(renameF.rejected,(state,action)=>{
         state.err=action.error.message
-        toast.warn('Could not rename');;
+        toast.warn('Could not rename.');
     });
   },
 });

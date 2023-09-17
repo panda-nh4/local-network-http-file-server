@@ -7,6 +7,8 @@ import selectedReducer from "./slices/selectedSlice";
 import locationsReducer from "./slices/locationsSlice";
 import overlayReducer from "./slices/overLaySlice";
 import renameReducer from "./slices/renameSlice";
+import newFolderReducer from "./slices/newFolderSlice";
+import deleteReducer from "./slices/deleteSlice";
 
 const store = configureStore({
   reducer: {
@@ -18,6 +20,8 @@ const store = configureStore({
     location: locationsReducer,
     overlay: overlayReducer,
     rename: renameReducer,
+    newFolder: newFolderReducer,
+    delete: deleteReducer,
   },
   // middleware:(getDefaultMiddleware)=>{getDefaultMiddleware()},
   devTools: true,
