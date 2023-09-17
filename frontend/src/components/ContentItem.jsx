@@ -15,7 +15,14 @@ import { setIdle } from "../slices/contentSlice.js";
 import { deselectOne, selectOne } from "../slices/selectedSlice.js";
 import axios from "axios";
 import { setHidden, setRename } from "../slices/overLaySlice.js";
-const ContentItem = ({ fName, isFolder, size, modified, selected }) => {
+const ContentItem = ({
+  fName,
+  isFolder,
+  size,
+  modified,
+  selected,
+  showOptions,
+}) => {
   const path = useSelector((state) => state.path.currentPath);
   const basePath = useSelector((state) => state.path.basePath);
   const fNameToShow = fName;
@@ -24,14 +31,14 @@ const ContentItem = ({ fName, isFolder, size, modified, selected }) => {
     fName,
     fSize: size,
   };
-  const qParams=new URLSearchParams();
-  qParams.set("base",basePath)
-  qParams.set("dir",path)
-  qParams.set("fname",fNameToShow)
+  const qParams = new URLSearchParams();
+  qParams.set("base", basePath);
+  qParams.set("dir", path);
+  qParams.set("fname", fNameToShow);
   const dispatch = useDispatch();
-  const url="/file/download?"+qParams
+  const url = "/file/download?" + qParams;
   const downloadFile = () => {
-    const newWindow = window.open(url,"_self", "noopener,noreferrer");
+    const newWindow = window.open(url, "_self", "noopener,noreferrer");
     if (newWindow) newWindow.opener = null;
   };
   const curDate = new Date();
@@ -40,10 +47,10 @@ const ContentItem = ({ fName, isFolder, size, modified, selected }) => {
     if (selected && !selectedItems.includes(fName))
       dispatch(selectOne(payload));
   });
-  const rename=()=>{
-    dispatch(setRename({type:"Rename",isFolder,fName:fNameToShow}))
-    dispatch(setHidden(false))
-  }
+  const rename = () => {
+    dispatch(setRename({ type: "Rename", isFolder, fName: fNameToShow }));
+    dispatch(setHidden(false));
+  };
   const modTime = (mdate) => {
     const mDate = new Date(mdate);
     const diff = curDate.getTime() - mDate.getTime();
@@ -109,7 +116,7 @@ const ContentItem = ({ fName, isFolder, size, modified, selected }) => {
     return matches;
   }
   let isDesktop = useMediaQuery("(min-width: 850px)");
-  var fontSize=isDesktop?'18px':'12px'
+  var fontSize = isDesktop ? "18px" : "12px";
   const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
     <a
       href=""
@@ -132,8 +139,8 @@ const ContentItem = ({ fName, isFolder, size, modified, selected }) => {
         justifyContent: "space-between",
         paddingRight: "3%",
         paddingLeft: "3%",
-        fontSize:fontSize,
-        paddingTop:"2px"
+        fontSize: fontSize,
+        paddingTop: "2px",
       }}
     >
       <div
@@ -163,7 +170,7 @@ const ContentItem = ({ fName, isFolder, size, modified, selected }) => {
         <div
           style={{
             display: "inline-flex",
-            alignItems:"center",
+            alignItems: "center",
             justifyContent: "left",
             width: "43%",
             overflow: "hidden",
@@ -228,22 +235,29 @@ const ContentItem = ({ fName, isFolder, size, modified, selected }) => {
             justifyContent: "right",
             paddingLeft: "0px",
             width: "6%",
+            height:"38px"
           }}
         >
-          <Dropdown>
-            <Dropdown.Toggle as={CustomToggle} />
-            <Dropdown.Menu size="sm" title="">
-              {/* <Dropdown.Header>Options</Dropdown.Header> */}
-              <Dropdown.Item onClick={() => downloadFile()} >Download</Dropdown.Item>
-              <Dropdown.Item onClick={()=>rename()}>Rename</Dropdown.Item>
-              <Dropdown.Item>Copy</Dropdown.Item>
-              <Dropdown.Item>Move</Dropdown.Item>
-              <Dropdown.Item>Delete</Dropdown.Item>
-              <Dropdown.Item>Properties</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
+          {showOptions ? (
+            <Dropdown>
+              <Dropdown.Toggle as={CustomToggle} />
+              <Dropdown.Menu size="sm" title="">
+                {/* <Dropdown.Header>Options</Dropdown.Header> */}
+                <Dropdown.Item onClick={() => downloadFile()}>
+                  Download
+                </Dropdown.Item>
+                <Dropdown.Item onClick={() => rename()}>Rename</Dropdown.Item>
+                <Dropdown.Item>Copy</Dropdown.Item>
+                <Dropdown.Item>Move</Dropdown.Item>
+                <Dropdown.Item>Delete</Dropdown.Item>
+                <Dropdown.Item>Properties</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          ) : (
+            <></>
+          )}
         </div>
-      ) : (
+      ) : showOptions ? (
         <div
           style={{
             display: "flex",
@@ -251,9 +265,14 @@ const ContentItem = ({ fName, isFolder, size, modified, selected }) => {
             justifyContent: "right",
             paddingLeft: "0px",
             width: "6%",
+            height:"38px"
           }}
         >
-          <Button variant="light" style={{ background: "white" }} onClick={() => downloadFile()} >
+          <Button
+            variant="light"
+            style={{ background: "white" }}
+            onClick={() => downloadFile()}
+          >
             <BsDownload />
           </Button>
           <Button variant="light" style={{ background: "white" }}>
@@ -266,12 +285,23 @@ const ContentItem = ({ fName, isFolder, size, modified, selected }) => {
             <Dropdown.Toggle as={CustomToggle} />
             <Dropdown.Menu size="sm" title="">
               {/* <Dropdown.Header>Options</Dropdown.Header> */}
-              <Dropdown.Item onClick={()=>rename()}>Rename</Dropdown.Item>
+              <Dropdown.Item onClick={() => rename()}>Rename</Dropdown.Item>
               <Dropdown.Item>Move</Dropdown.Item>
               <Dropdown.Item>Properties</Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
         </div>
+      ) : (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "right",
+            paddingLeft: "0px",
+            width: "6%",
+            height:"38px"
+          }}
+        ></div>
       )}
     </div>
   );

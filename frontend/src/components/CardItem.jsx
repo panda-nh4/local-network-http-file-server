@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPath } from "../slices/pathSlice.js";
 import { setIdle } from "../slices/contentSlice.js";
 import { deselectOne, selectOne } from "../slices/selectedSlice.js";
-const CardItem = ({ fName, isFolder, size, modified, selected }) => {
+const CardItem = ({ fName, isFolder, size, modified, selected, showOptions }) => {
   const iconSrc = isFolder ? folderIcon : fileIcon;
   const dispatch = useDispatch();
   const path = useSelector((state) => state.path.currentPath);
@@ -134,7 +134,7 @@ const CardItem = ({ fName, isFolder, size, modified, selected }) => {
             {modTime(modified)}
           </Card.Text>
           <div style={{ display: "flex", alignItems: "center" }}>
-            <Dropdown>
+            <Dropdown style={{display:showOptions?"":"none"}}>
               <Dropdown.Toggle as={CustomToggle} />
               <Dropdown.Menu size="sm" title="">
                 {/* <Dropdown.Header>Options</Dropdown.Header> */}
