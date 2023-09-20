@@ -6,7 +6,14 @@ import { renameF, resetErrs } from "../slices/renameSlice";
 import { setIdle } from "../slices/contentSlice";
 import { toast } from "react-toastify";
 import { createDir, resetCreateDirErrs } from "../slices/newFolderSlice";
-import { deleteFile, deleteFolder, resetDeleteErrs } from "../slices/deleteSlice";
+import {
+  deleteFile,
+  deleteFolder,
+  multiDelete,
+  resetDeleteErrs,
+} from "../slices/deleteSlice";
+import { resetSelected } from "../slices/selectedSlice";
+import axios from "axios";
 
 const OverlayComponent = () => {
   const hidden = useSelector((state) => state.overlay.hidden);
@@ -16,12 +23,16 @@ const OverlayComponent = () => {
   const dispatch = useDispatch();
   var spacedTitle = "";
   const [newName, setNewName] = useState(fName);
+  const [filesToUpload, setFilesToUpload] = useState([]);
   const base = useSelector((state) => state.path.basePath);
   const dir = useSelector((state) => state.path.currentPath);
   const spacesToAdd = Math.floor(fName.length / 15);
   const renameStatus = useSelector((state) => state.rename.status);
   const createFolderStatus = useSelector((state) => state.newFolder.status);
   const deleteStatus = useSelector((state) => state.delete.status);
+  const contents = useSelector((state) => state.contents.content);
+  const items = useSelector((state) => state.select.selectedItems);
+  var uploadStatus = false;
   useEffect(() => {
     if (type === "Rename") {
       setNewName(fName);
@@ -36,14 +47,15 @@ const OverlayComponent = () => {
         dispatch(resetCreateDirErrs());
         closeOverlay();
       }
-    } else if (type === "DeleteOne") {
+    } else if (type === "DeleteOne" || type === "DeleteMany") {
       if (deleteStatus === "success") {
         dispatch(setIdle());
         dispatch(resetDeleteErrs());
+        dispatch(resetSelected());
         closeOverlay();
       }
     }
-  }, [hidden, renameStatus, createFolderStatus,deleteStatus]);
+  }, [hidden, renameStatus, createFolderStatus, deleteStatus, uploadStatus]);
   for (let i = 0; i < spacesToAdd; i++) {
     spacedTitle = spacedTitle + fName.substring(i * 15, (i + 1) * 15) + " ";
   }
@@ -79,7 +91,66 @@ const OverlayComponent = () => {
     isFolder ? dispatch(deleteFolder(reqBody)) : dispatch(deleteFile(reqBody));
   };
   const deleteMany = () => {
-    const paths = [];
+    const itemNames = items.map(
+      (fname) => fname.split("/")[fname.split("/").length - 1]
+    );
+    const selectedFileNames = contents.files
+      .filter((_) => itemNames.includes(_.fName))
+      .map((_) => _.fName);
+    const selectedFolderNames = contents.folders
+      .filter((_) => itemNames.includes(_.fName))
+      .map((_) => _.fName);
+    const fileReqBody = { paths: [] };
+    const folderReqBody = { paths: [] };
+    selectedFileNames.map((fname) =>
+      fileReqBody.paths.push({ fname, dir, base })
+    );
+    selectedFolderNames.map((fname) =>
+      folderReqBody.paths.push({ fname, dir, base })
+    );
+    dispatch(multiDelete({ fileReqBody, folderReqBody }));
+  };
+  const toastId = React.useRef(null);
+  const uploadFiles = () => {
+    // var totalUploadSize=0
+    // Array.from(filesToUpload).map((_)=>totalUploadSize+=_.size)
+    // console.log(totalUploadSize)
+
+    var formData = new FormData();
+    //formData.append("files",Array.from(filesToUpload))
+    Array.from(filesToUpload).map((_) => formData.append("files", _));
+    formData.append("base", base);
+    formData.append("dir", dir);
+    axios
+      .request({
+        method: "post",
+        url: "/file/upload",
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        data: formData,
+        onUploadProgress: (p) => {
+          const progress = p.loaded / p.total;
+          if (toastId.current === null) {
+            toastId.current = toast("Uploading", { progress });
+            if (progress===1)
+            toast.dismiss(toastId.current)
+          } else {
+            toast.update(toastId.current, { progress });
+          }
+        },
+      })
+      .then(
+        (data) => {
+          toast.done(toastId.current);
+          toastId.current = null;
+          toast.success(`Uploaded ${data.data.success_upload.length} files!`);
+          closeOverlay();
+          dispatch(setIdle());
+          
+        },
+        (data) => toast.warn(`Could not upload ${data.data.upload_error.length} files.`)
+      );
   };
   let contentFrag = <></>;
   if (type === "Rename") {
@@ -204,7 +275,7 @@ const OverlayComponent = () => {
       >
         <div style={{ width: "80%", paddingLeft: "3%", paddingBottom: "2%" }}>
           <div style={{ display: "inline-flex" }}>
-            {"Delete folder : "}
+            {isFolder ? "Delete folder : " : "Delete file : "}
             {fName}
           </div>
           <div>
@@ -231,7 +302,104 @@ const OverlayComponent = () => {
         />
       </div>
     );
-  } else if (type === "Delete") {
+  } else if (type === "DeleteMany") {
+    contentFrag = (
+      <div
+        style={{
+          width: "80%",
+          backgroundColor: "white",
+          display: "flex",
+          border: "2px",
+          borderStyle: " solid",
+          borderColor: "#313539",
+          borderRadius: "15px",
+          justifyContent: "space-between",
+          paddingTop: "10px",
+          paddingBottom: "5px",
+        }}
+      >
+        <div style={{ width: "80%", paddingLeft: "3%", paddingBottom: "2%" }}>
+          <div style={{ display: "inline-flex" }}>
+            {"Delete items: "}
+            {items.map((fname) =>
+              fname.split("/")[fname.split("/").length - 1].concat(" ")
+            )}
+          </div>
+          <div>
+            <Button
+              variant="light"
+              style={{
+                backgroundColor: "white",
+                paddingLeft: "10px",
+                margin: "5px",
+                marginLeft: "0px",
+              }}
+              onClick={() => deleteMany()}
+            >
+              Delete
+            </Button>
+          </div>
+        </div>
+        <button
+          type="button"
+          className="btn-close text-reset"
+          aria-label="Close"
+          style={{ paddingRight: "3%", paddingRight: "8%" }}
+          onClick={() => closeOverlay()}
+        />
+      </div>
+    );
+  } else if (type === "Upload") {
+    contentFrag = (
+      <div
+        style={{
+          width: "80%",
+          backgroundColor: "white",
+          display: "flex",
+          border: "2px",
+          borderStyle: " solid",
+          borderColor: "#313539",
+          borderRadius: "15px",
+          justifyContent: "space-between",
+          paddingTop: "10px",
+          paddingBottom: "5px",
+        }}
+      >
+        <div style={{ width: "80%", paddingLeft: "3%", paddingBottom: "2%" }}>
+          <div style={{ display: "inline-flex" }}>{"Upload files: "}</div>
+          <input
+            style={{
+              margin: "5px",
+              marginLeft: "0px",
+              width: "100%",
+              padding: "5px",
+            }}
+            onChange={(e) => setFilesToUpload(e.target.files)}
+            type="file"
+            multiple
+          />
+          <Button
+            variant="light"
+            style={{
+              backgroundColor: "white",
+              paddingLeft: "10px",
+              margin: "5px",
+              marginLeft: "0px",
+            }}
+            onClick={() => uploadFiles()}
+          >
+            Upload
+          </Button>
+        </div>
+        <button
+          type="button"
+          className="btn-close text-reset"
+          aria-label="Close"
+          style={{ paddingRight: "3%", paddingRight: "8%" }}
+          onClick={() => closeOverlay()}
+        />
+      </div>
+    );
   }
   return (
     <div
@@ -246,7 +414,7 @@ const OverlayComponent = () => {
         right: "0",
         justifyContent: "center",
         alignItems: "center",
-        zIndex:"100"
+        zIndex: "100",
       }}
     >
       {contentFrag}

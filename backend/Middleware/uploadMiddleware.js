@@ -8,7 +8,7 @@ const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = dirname(__filename);
-    const dest = path.join(__dirname,"..","temp");
+    const dest = path.join(__dirname, "..", "temp");
     cb(null, dest);
   },
   filename: (req, file, cb) => {
@@ -18,7 +18,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-
 const uploadMiddleware = (req, res, next) => {
   upload.array("files")(req, res, (err) => {
     if (err) {
@@ -26,34 +25,37 @@ const uploadMiddleware = (req, res, next) => {
     }
     const files = req.files;
     const errors = [];
-    files.forEach((file) => {
-      const allowedTypes = ["image/jpeg", "image/png"];
-      const maxSize = 10 * 1024 * 1024 * 1024;
-
-      //   if (!allowedTypes.includes(file.mimetype)) {
-      //     errors.push(`Invalid file type: ${file.originalname}`);
-      //   }
-
-      if (file.size > maxSize) {
-        errors.push(`File too large: ${file.originalname}`);
-      }
-    });
-
-    // Handle validation errors
-    if (errors.length > 0) {
-      // Remove uploaded files
+    if (files == undefined) res.status(400).json("Damn");
+    else {
       files.forEach((file) => {
-        fs.unlinkSync(file.path);
+        // const allowedTypes = ["image/jpeg", "image/png"];
+        const maxSize = 10 * 1024 * 1024 * 1024;
+
+        //   if (!allowedTypes.includes(file.mimetype)) {
+        //     errors.push(`Invalid file type: ${file.originalname}`);
+        //   }
+
+        if (file.size > maxSize) {
+          errors.push(`File too large: ${file.originalname}`);
+        }
       });
 
-      return res.status(400).json({ errors });
+      // Handle validation errors
+      if (errors.length > 0) {
+        // Remove uploaded files
+        files.forEach((file) => {
+          fs.unlinkSync(file.path);
+        });
+
+        return res.status(400).json({ errors });
+      }
+
+      // Attach files to the request object
+      req.files = files;
+
+      // Proceed to the next middleware or route handler
+      next();
     }
-
-    // Attach files to the request object
-    req.files = files;
-
-    // Proceed to the next middleware or route handler
-    next();
   });
 };
 
