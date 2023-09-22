@@ -6,6 +6,7 @@ import { renameF, resetErrs } from "../slices/renameSlice";
 import { setIdle } from "../slices/contentSlice";
 import { toast } from "react-toastify";
 import { createDir, resetCreateDirErrs } from "../slices/newFolderSlice";
+import PathSelection from "./PathSelection";
 import {
   deleteFile,
   deleteFolder,
@@ -133,8 +134,7 @@ const OverlayComponent = () => {
           const progress = p.loaded / p.total;
           if (toastId.current === null) {
             toastId.current = toast("Uploading", { progress });
-            if (progress===1)
-            toast.dismiss(toastId.current)
+            if (progress === 1) toast.dismiss(toastId.current);
           } else {
             toast.update(toastId.current, { progress });
           }
@@ -147,9 +147,9 @@ const OverlayComponent = () => {
           toast.success(`Uploaded ${data.data.success_upload.length} files!`);
           closeOverlay();
           dispatch(setIdle());
-          
         },
-        (data) => toast.warn(`Could not upload ${data.data.upload_error.length} files.`)
+        (data) =>
+          toast.warn(`Could not upload ${data.data.upload_error.length} files.`)
       );
   };
   let contentFrag = <></>;
@@ -396,6 +396,55 @@ const OverlayComponent = () => {
           className="btn-close text-reset"
           aria-label="Close"
           style={{ paddingRight: "3%", paddingRight: "8%" }}
+          onClick={() => closeOverlay()}
+        />
+      </div>
+    );
+  } else if (type === "copyOne") {
+    contentFrag = (
+      <div
+        style={{
+          width: "80%",
+          height: "80%",
+          backgroundColor: "white",
+          display: "flex",
+          border: "2px",
+          borderStyle: " solid",
+          borderColor: "#313539",
+          borderRadius: "15px",
+          justifyContent: "space-between",
+          paddingTop: "10px",
+          paddingBottom: "7px",
+        }}
+      >
+        <div style={{ width: "90%", paddingLeft: "3%", paddingBottom: "2%" }}>
+          <div style={{ display: "inline-flex" }}>
+            {"Copy " + fName + " to: "}
+          </div>
+          <div style={{ height: "90%", width: "100%" }}>
+            <PathSelection />
+          </div>
+          <div  style={{ height: "10%", width: "100%", }}>
+          <Button
+            variant="light"
+            style={{
+              backgroundColor: "white",
+              paddingLeft: "10px",
+              margin: "5px",
+              marginLeft: "0px",
+              paddingTop:"2px"
+            }}
+            onClick={() => {}}
+          >
+            Copy
+          </Button>
+          </div>
+        </div>
+        <button
+          type="button"
+          className="btn-close text-reset"
+          aria-label="Close"
+          style={{ paddingRight: "3%",  }}
           onClick={() => closeOverlay()}
         />
       </div>

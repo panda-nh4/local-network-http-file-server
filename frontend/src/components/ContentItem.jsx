@@ -14,7 +14,12 @@ import { setPath } from "../slices/pathSlice.js";
 import { setIdle } from "../slices/contentSlice.js";
 import { deselectOne, selectOne } from "../slices/selectedSlice.js";
 import axios from "axios";
-import { setHidden, setRename, setDeleteOne } from "../slices/overLaySlice.js";
+import {
+  setHidden,
+  setRename,
+  setDeleteOne,
+  setCopyOne,
+} from "../slices/overLaySlice.js";
 const ContentItem = ({
   fName,
   isFolder,
@@ -53,6 +58,10 @@ const ContentItem = ({
   };
   const deleteItem = () => {
     dispatch(setDeleteOne({ type: "DeleteOne", isFolder, fName: fNameToShow }));
+    dispatch(setHidden(false));
+  };
+  const copyItem = () => {
+    dispatch(setCopyOne({isFolder,fName:fNameToShow,type: "copyOne",}))
     dispatch(setHidden(false));
   };
   const modTime = (mdate) => {
@@ -251,7 +260,7 @@ const ContentItem = ({
                   Download
                 </Dropdown.Item>
                 <Dropdown.Item onClick={() => rename()}> Rename </Dropdown.Item>
-                <Dropdown.Item>Copy</Dropdown.Item>
+                <Dropdown.Item onClick={() => copyItem()}>Copy</Dropdown.Item>
                 <Dropdown.Item>Move</Dropdown.Item>
                 <Dropdown.Item onClick={() => deleteItem()}>
                   Delete
@@ -281,7 +290,7 @@ const ContentItem = ({
           >
             <BsDownload />
           </Button>
-          <Button variant="light" style={{ background: "white" }}>
+          <Button variant="light" style={{ background: "white" }} onClick={() => copyItem()}>
             <BiCopy />
           </Button>
           <Button
