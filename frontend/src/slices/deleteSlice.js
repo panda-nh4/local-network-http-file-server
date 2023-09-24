@@ -29,7 +29,10 @@ const multiDelete = createAsyncThunk("delete/multiple", async (target) => {
       ...folderResponse.data.unableToDelete,
       ...fileResponse.data.unableToDelete,
     ],
-    doesNotExist: [...folderResponse.data.doesNotExist,... fileResponse.data.doesNotExist],
+    doesNotExist: [
+      ...folderResponse.data.doesNotExist,
+      ...fileResponse.data.doesNotExist,
+    ],
   };
   return finalResponse;
 });
@@ -148,6 +151,6 @@ const deleteSlice = createSlice({
   },
 });
 
-export { deleteFile, deleteFolder ,multiDelete};
+export { deleteFile, deleteFolder, multiDelete };
 export const { resetDeleteErrs } = deleteSlice.actions;
 export default deleteSlice.reducer;

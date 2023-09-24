@@ -10,7 +10,6 @@ const delete_dir = asyncHandler(async (req, res) => {
   const doesNotExist = [];
   const dirs = req.actualPathObjs;
   const delOne = async ({ dir, fname, objDir }) => {
-    console.log("Dir: ",dir,"Objdir: ",objDir,fname)
     if (objDir === "" && fname==="") {
       unableToDelete.push(fname);
     } else {

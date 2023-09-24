@@ -18,10 +18,15 @@ const FabComponent = () => {
     dispatch(setDeleteMany("DeleteMany"));
     dispatch(setHidden(false));
   };
-  const selectFiles=()=>{
+  const uploadFiles = () => {
     dispatch(setDeleteMany("Upload"));
     dispatch(setHidden(false));
-  }
+  };
+  const copyFiles = () => {
+    dispatch(setDeleteMany("copyMany"));
+    dispatch(setHidden(false));
+  };
+
   const fabContents =
     selectedF === 0 ? (
       <Fab
@@ -33,10 +38,18 @@ const FabComponent = () => {
         // alwaysShowTitle={true}
         // onClick={someFunctionForTheMainButton}
       >
-        <Action text="Make new folder" style={{ background: "#313539" }} onClick={() => createFolder()}>
-          <BsFolderPlus  />
+        <Action
+          text="Make new folder"
+          style={{ background: "#313539" }}
+          onClick={() => createFolder()}
+        >
+          <BsFolderPlus />
         </Action>
-        <Action text="Upload files" style={{ background: "#313539" }} onClick={() => selectFiles()}>
+        <Action
+          text="Upload files"
+          style={{ background: "#313539" }}
+          onClick={() => uploadFiles()}
+        >
           <BsUpload />
         </Action>
       </Fab>
@@ -50,7 +63,11 @@ const FabComponent = () => {
         // alwaysShowTitle={true}
         // onClick={someFunctionForTheMainButton}
       >
-        <Action text="Copy" style={{ background: "#313539" }}>
+        <Action
+          text="Copy"
+          style={{ background: "#313539" }}
+          onClick={() => copyFiles()}
+        >
           <BiCopy />
         </Action>
         <Action text="Move" style={{ background: "#313539" }}>

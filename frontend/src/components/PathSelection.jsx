@@ -12,6 +12,7 @@ const PathSelection = () => {
   const currentPath = useSelector((state) => state.path.selectionCurrentPath);
   const [folders, setfolders] = useState([]);
   const [files, setfiles] = useState([]);
+  const [status,setStatus]=useState(0);
   useEffect(() => {
     if (basePath !== "") {
       axios
@@ -20,8 +21,7 @@ const PathSelection = () => {
           dir: currentPath,
         })
         .then(
-          (res) => {
-            console.log(res);
+          (res) => { 
             var folderNames = [];
             var fileNames = [];
             res.data.files.map((_) => (fileNames = [...fileNames, _.fName]));
@@ -30,9 +30,11 @@ const PathSelection = () => {
             );
             setfolders(folderNames);
             setfiles(fileNames);
+            setStatus(200)
           },
           (err) => {
             console.log(err.message);
+            setStatus(404)
           }
         );
     } else {
@@ -42,12 +44,23 @@ const PathSelection = () => {
   }, [basePath, currentPath]);
   return (
     <div style={{ width: "100%", height: "100%" }}>
-      <div className="px-3" style={{ display: "flex", overflow: "auto", width: "100%", height: "22%",}}>
-        <Breadcrumb style={{ display: "flex", overflowWrap: "break-word",width:"100%"}}>
+      <div
+        className="px-3"
+        style={{
+          display: "flex",
+          overflow: "auto",
+          width: "100%",
+          height: "22%",
+        }}
+      >
+        <Breadcrumb
+          style={{ display: "flex", overflowWrap: "break-word", width: "100%" }}
+        >
           <StyledBreadcrumbItem active>
             <Button
               variant="light"
               onClick={() => {
+                setStatus(0)
                 dispatch(setSelectionPath({ basePath: "", currentPath: "" }));
               }}
               style={{ background: "white" }}
@@ -68,7 +81,6 @@ const PathSelection = () => {
           {currentPath.split("/").map((fname, idx) => {
             return (
               <StyledBreadcrumbItem active key={idx}>
-                {console.log(currentPath)}
                 {currentPath.split("/").length === idx + 1 ? (
                   <Button
                     disabled
@@ -91,7 +103,7 @@ const PathSelection = () => {
                   <Button
                     variant="light"
                     onClick={() => {
-                      console.log(currentPath);
+                      setStatus(0)
                       dispatch(
                         setSelectionCurrentPath({
                           currentPath: currentPath
@@ -121,12 +133,13 @@ const PathSelection = () => {
           })}
         </Breadcrumb>
       </div>
-      <div style={{ width: "100%", height: "80%", paddingTop:"1%"}}>
+      <div style={{ width: "100%", height: "80%", paddingTop: "1%" }}>
         <PathSelectionContents
           basePath={basePath}
           currentPath={currentPath}
           folders={folders}
           files={files}
+          status={status}
         />
       </div>
     </div>

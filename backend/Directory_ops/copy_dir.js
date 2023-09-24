@@ -4,6 +4,7 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 import asyncHandler from "express-async-handler";
 import fse from 'fs-extra'
+import { check_exists } from "../Utils/fileUtils.js";
 const copy_dir = asyncHandler(async (req, res) => {
   const dirs_copied=[]
   const dirs_notCopied=[]
@@ -12,10 +13,12 @@ const copy_dir = asyncHandler(async (req, res) => {
     try{
     const src = srcPath.srcDir
     const destPath=srcPath.destDir
+    if(await check_exists(destPath))
+    throw new Error()
     await fse.copy(src,destPath,{overwrite:false,errorOnExist:true})
-    dirs_copied.push(srcPath.srcDir);}
+    dirs_copied.push(srcPath.name);}
     catch{
-      dirs_notCopied.push(srcPath.srcDir)
+      dirs_notCopied.push(srcPath.name)
     }
   }
 

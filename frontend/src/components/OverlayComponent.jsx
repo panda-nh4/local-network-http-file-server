@@ -15,6 +15,7 @@ import {
 } from "../slices/deleteSlice";
 import { resetSelected } from "../slices/selectedSlice";
 import axios from "axios";
+import { resetSelectionPath } from "../slices/pathSlice";
 
 const OverlayComponent = () => {
   const hidden = useSelector((state) => state.overlay.hidden);
@@ -22,6 +23,8 @@ const OverlayComponent = () => {
   const isFolder = useSelector((state) => state.overlay.isFolder);
   const fName = useSelector((state) => state.overlay.fName);
   const dispatch = useDispatch();
+  const basePath = useSelector((state) => state.path.selectionBasePath);
+  const currentPath = useSelector((state) => state.path.selectionCurrentPath);
   var spacedTitle = "";
   const [newName, setNewName] = useState(fName);
   const [filesToUpload, setFilesToUpload] = useState([]);
@@ -110,6 +113,164 @@ const OverlayComponent = () => {
       folderReqBody.paths.push({ fname, dir, base })
     );
     dispatch(multiDelete({ fileReqBody, folderReqBody }));
+  };
+  const copyItem = () => {
+    var copyReqBody;
+    if (!isFolder) {
+      copyReqBody = [
+        {
+          srcDir: {
+            base,
+            dir,
+          },
+          name: fName,
+          destDir: {
+            base: basePath,
+            dir: currentPath,
+          },
+        },
+      ];
+      axios.post("/file/copy", copyReqBody).then(
+        (res) => {
+          console.log(res);
+          if (res.data.filesCopied.length === 1) {
+            toast.success("Copied 1 file");
+            closeOverlay();
+            dispatch(resetSelectionPath());
+          } else toast.warn("Unable to copy.");
+        },
+        (err) => {
+          toast.warn("Network error.");
+        }
+      );
+    } else {
+      copyReqBody = [
+        {
+          srcDir: {
+            base,
+            dir: dir.concat("/", fName),
+          },
+          name: fName,
+          destDir: {
+            base: basePath,
+            dir: currentPath.concat("/", fName),
+          },
+        },
+      ];
+      axios.post("/dir/copy", copyReqBody).then(
+        (res) => {
+          console.log(res);
+          if (res.data.dirs_copied.length === 1) {
+            toast.success("Copied 1 folder");
+            closeOverlay();
+            dispatch(resetSelectionPath());
+          } else toast.warn("Unable to copy.");
+        },
+        (err) => {
+          toast.warn("Network error.");
+        }
+      );
+    }
+  };
+  const copyItems = () => {
+    const itemNames = items.map(
+      (fname) => fname.split("/")[fname.split("/").length - 1]
+    );
+    const selectedFileNames = contents.files
+      .filter((_) => itemNames.includes(_.fName))
+      .map((_) => _.fName);
+    const selectedFolderNames = contents.folders
+      .filter((_) => itemNames.includes(_.fName))
+      .map((_) => _.fName);
+    const fileReqBody = [];
+    const folderReqBody = [];
+    selectedFileNames.map((fname) =>
+      fileReqBody.push({
+        srcDir: {
+          base,
+          dir,
+        },
+        name: fname,
+        destDir: {
+          base: basePath,
+          dir: currentPath,
+        },
+      })
+    );
+    selectedFolderNames.map((fname) =>
+      folderReqBody.push({
+        srcDir: {
+          base,
+          dir: dir.concat("/", fname),
+        },
+        name: fname,
+        destDir: {
+          base: basePath,
+          dir: currentPath.concat("/", fname),
+        },
+      })
+    );
+    // console.log(folderReqBody);
+    // console.log(fileReqBody);
+    var finalRes = {
+      itemsCopied: [],
+      itemsNotCopied: [],
+    };
+
+    var status = false;
+    axios
+      .post("/dir/copy", folderReqBody)
+      .then(
+        (res) => {
+          finalRes.itemsCopied = [
+            ...finalRes.itemsCopied,
+            ...res.data.dirs_copied,
+          ];
+          finalRes.itemsNotCopied = [
+            ...finalRes.itemsNotCopied,
+            ...res.data.dirs_notCopied,
+          ];
+          // console.log(itemsCopied);
+          // console.log(itemsNotCopied);
+        },
+        (err) => {
+          status = true;
+        }
+      )
+      .then(() => {
+        axios
+          .post("/file/copy", fileReqBody)
+          .then(
+            (res) => {
+              finalRes.itemsCopied = [
+                ...finalRes.itemsCopied,
+                ...res.data.filesCopied,
+              ];
+              finalRes.itemsNotCopied = [
+                ...finalRes.itemsNotCopied,
+                ...res.data.filesNotCopied,
+              ];
+            },
+            (err) => {
+              status = true;
+            }
+          )
+          .then(() => {
+            console.log(finalRes.itemsCopied);
+            if (status) toast.warn("Network error.");
+            if (finalRes.itemsCopied.length > 0) {
+              console.log("reached");
+              toast.success("Copied " + finalRes.itemsCopied.length + " items");
+            }
+            if (finalRes.itemsNotCopied.length > 0)
+              toast.warn(
+                "Unable to copy: " + finalRes.itemsNotCopied.toString()
+              );
+          });
+      });
+
+    closeOverlay();
+    dispatch(resetSelectionPath());
   };
   const toastId = React.useRef(null);
   const uploadFiles = () => {
@@ -424,28 +585,83 @@ const OverlayComponent = () => {
           <div style={{ height: "90%", width: "100%" }}>
             <PathSelection />
           </div>
-          <div  style={{ height: "10%", width: "100%", }}>
-          <Button
-            variant="light"
-            style={{
-              backgroundColor: "white",
-              paddingLeft: "10px",
-              margin: "5px",
-              marginLeft: "0px",
-              paddingTop:"2px"
-            }}
-            onClick={() => {}}
-          >
-            Copy
-          </Button>
+          <div style={{ height: "10%", width: "100%" }}>
+            <Button
+              variant="light"
+              style={{
+                backgroundColor: "white",
+                paddingLeft: "10px",
+                margin: "5px",
+                marginLeft: "0px",
+                paddingTop: "2px",
+              }}
+              onClick={() => copyItem()}
+            >
+              Copy
+            </Button>
           </div>
         </div>
         <button
           type="button"
           className="btn-close text-reset"
           aria-label="Close"
-          style={{ paddingRight: "3%",  }}
-          onClick={() => closeOverlay()}
+          style={{ paddingRight: "3%" }}
+          onClick={() => {
+            closeOverlay();
+            dispatch(resetSelectionPath());
+          }}
+        />
+      </div>
+    );
+  } else if (type === "copyMany") {
+    contentFrag = (
+      <div
+        style={{
+          width: "80%",
+          height: "80%",
+          backgroundColor: "white",
+          display: "flex",
+          border: "2px",
+          borderStyle: " solid",
+          borderColor: "#313539",
+          borderRadius: "15px",
+          justifyContent: "space-between",
+          paddingTop: "10px",
+          paddingBottom: "7px",
+        }}
+      >
+        <div style={{ width: "90%", paddingLeft: "3%", paddingBottom: "2%" }}>
+          <div style={{ display: "inline-flex" }}>
+            {"Copy " + items.length + " items to: "}
+          </div>
+          <div style={{ height: "90%", width: "100%" }}>
+            <PathSelection />
+          </div>
+          <div style={{ height: "10%", width: "100%" }}>
+            <Button
+              variant="light"
+              style={{
+                backgroundColor: "white",
+                paddingLeft: "10px",
+                margin: "5px",
+                marginLeft: "0px",
+                paddingTop: "2px",
+              }}
+              onClick={() => copyItems()}
+            >
+              Copy
+            </Button>
+          </div>
+        </div>
+        <button
+          type="button"
+          className="btn-close text-reset"
+          aria-label="Close"
+          style={{ paddingRight: "3%" }}
+          onClick={() => {
+            closeOverlay();
+            dispatch(resetSelectionPath());
+          }}
         />
       </div>
     );

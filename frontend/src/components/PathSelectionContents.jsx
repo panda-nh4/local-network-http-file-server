@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setSelectionCurrentPath, setSelectionPath } from "../slices/pathSlice";
 import { BsFolderFill } from "react-icons/bs";
 
-const PathSelectionContents = ({ basePath, currentPath,folders,files }) => {
+const PathSelectionContents = ({ basePath, currentPath,folders,files ,status}) => {
   const locations = useSelector((state) => state.location.locations);
   const dispatch = useDispatch();
   const setBase = (base) => {
@@ -13,7 +13,9 @@ const PathSelectionContents = ({ basePath, currentPath,folders,files }) => {
     const newPath=currentPath===""?_:"".concat(currentPath,"/",_)
     dispatch(setSelectionCurrentPath({currentPath:newPath}))
   }
-  const contentFrag =
+  let contentFrag
+  if (status===200 || status===0)
+  {contentFrag =
     basePath === "" ? (
       <div style={{ width: "100%", height:"100%"}}>
         {locations.map((_) => (
@@ -108,7 +110,12 @@ const PathSelectionContents = ({ basePath, currentPath,folders,files }) => {
           </div>
         ))}
       </div>
-    );
+    );}
+    else{
+      contentFrag=<div style={{ width: "100%", height:"100%"}}>
+        Error
+      </div>
+    }
   return contentFrag;
 };
 
