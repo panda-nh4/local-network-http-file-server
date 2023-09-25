@@ -18,8 +18,9 @@ const PathSelectionContents = ({ basePath, currentPath,folders,files ,status}) =
   {contentFrag =
     basePath === "" ? (
       <div style={{ width: "100%", height:"100%"}}>
-        {locations.map((_) => (
+        {locations.map((_,idx) => (
           <div
+          key={idx}
             style={{
               display: "flex",
               width: "100%",
@@ -65,8 +66,9 @@ const PathSelectionContents = ({ basePath, currentPath,folders,files ,status}) =
       </div>
     ) : (
       <div style={{height:"98%", width:"100%", overflow:"auto"}}>
-        {folders.map((_) => (
+        {folders.map((_,idx) => (
           <div
+          key={idx}
             style={{
               display: "flex",
               width: "100%",

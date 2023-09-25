@@ -19,6 +19,7 @@ import {
   setRename,
   setDeleteOne,
   setCopyOne,
+  setMoveOne,
 } from "../slices/overLaySlice.js";
 const ContentItem = ({
   fName,
@@ -61,7 +62,11 @@ const ContentItem = ({
     dispatch(setHidden(false));
   };
   const copyItem = () => {
-    dispatch(setCopyOne({isFolder,fName:fNameToShow,type: "copyOne",}))
+    dispatch(setCopyOne({ isFolder, fName: fNameToShow, type: "copyOne" }));
+    dispatch(setHidden(false));
+  };
+  const moveItem = () => {
+    dispatch(setMoveOne({ isFolder, fName: fNameToShow, type: "moveOne" }));
     dispatch(setHidden(false));
   };
   const modTime = (mdate) => {
@@ -261,7 +266,7 @@ const ContentItem = ({
                 </Dropdown.Item>
                 <Dropdown.Item onClick={() => rename()}> Rename </Dropdown.Item>
                 <Dropdown.Item onClick={() => copyItem()}>Copy</Dropdown.Item>
-                <Dropdown.Item>Move</Dropdown.Item>
+                <Dropdown.Item onClick={() => moveItem()}>Move</Dropdown.Item>
                 <Dropdown.Item onClick={() => deleteItem()}>
                   Delete
                 </Dropdown.Item>
@@ -290,7 +295,11 @@ const ContentItem = ({
           >
             <BsDownload />
           </Button>
-          <Button variant="light" style={{ background: "white" }} onClick={() => copyItem()}>
+          <Button
+            variant="light"
+            style={{ background: "white" }}
+            onClick={() => copyItem()}
+          >
             <BiCopy />
           </Button>
           <Button
@@ -305,7 +314,7 @@ const ContentItem = ({
             <Dropdown.Menu size="sm" title="">
               {/* <Dropdown.Header>Options</Dropdown.Header> */}
               <Dropdown.Item onClick={() => rename()}>Rename</Dropdown.Item>
-              <Dropdown.Item>Move</Dropdown.Item>
+              <Dropdown.Item onClick={()=>moveItem()}>Move</Dropdown.Item>
               <Dropdown.Item>Properties</Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>

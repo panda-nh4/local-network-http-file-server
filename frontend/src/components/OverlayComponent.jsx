@@ -113,6 +113,7 @@ const OverlayComponent = () => {
       folderReqBody.paths.push({ fname, dir, base })
     );
     dispatch(multiDelete({ fileReqBody, folderReqBody }));
+    dispatch(resetSelected());
   };
   const copyItem = () => {
     var copyReqBody;
@@ -132,9 +133,10 @@ const OverlayComponent = () => {
       ];
       axios.post("/file/copy", copyReqBody).then(
         (res) => {
-          console.log(res);
+          // console.log(res);
           if (res.data.filesCopied.length === 1) {
             toast.success("Copied 1 file");
+            dispatch(setIdle())
             closeOverlay();
             dispatch(resetSelectionPath());
           } else toast.warn("Unable to copy.");
@@ -159,9 +161,10 @@ const OverlayComponent = () => {
       ];
       axios.post("/dir/copy", copyReqBody).then(
         (res) => {
-          console.log(res);
+          // console.log(res);
           if (res.data.dirs_copied.length === 1) {
             toast.success("Copied 1 folder");
+            dispatch(setIdle())
             closeOverlay();
             dispatch(resetSelectionPath());
           } else toast.warn("Unable to copy.");
@@ -172,6 +175,68 @@ const OverlayComponent = () => {
       );
     }
   };
+
+  const moveItem = () => {
+    var copyReqBody;
+    if (!isFolder) {
+      copyReqBody = [
+        {
+          srcDir: {
+            base,
+            dir,
+          },
+          name: fName,
+          destDir: {
+            base: basePath,
+            dir: currentPath,
+          },
+        },
+      ];
+      axios.post("/file/move", copyReqBody).then(
+        (res) => {
+          // console.log(res);
+          if (res.data.dirs_moved.length === 1) {
+            toast.success("Copied 1 file");
+            dispatch(setIdle())
+            closeOverlay();
+            dispatch(resetSelectionPath());
+          } else toast.warn("Unable to copy.");
+        },
+        (err) => {
+          toast.warn("Network error.");
+        }
+      );
+    } else {
+      copyReqBody = [
+        {
+          srcDir: {
+            base,
+            dir: dir.concat("/", fName),
+          },
+          name: fName,
+          destDir: {
+            base: basePath,
+            dir: currentPath.concat("/", fName),
+          },
+        },
+      ];
+      axios.post("/dir/move", copyReqBody).then(
+        (res) => {
+          // console.log(res);
+          if (res.data.dirs_moved.length === 1) {
+            toast.success("Moved 1 folder");
+            dispatch(setIdle())
+            closeOverlay();
+            dispatch(resetSelectionPath());
+          } else toast.warn("Unable to move.");
+        },
+        (err) => {
+          toast.warn("Network error.");
+        }
+      );
+    }
+  };
+
   const copyItems = () => {
     const itemNames = items.map(
       (fname) => fname.split("/")[fname.split("/").length - 1]
@@ -256,10 +321,9 @@ const OverlayComponent = () => {
             }
           )
           .then(() => {
-            console.log(finalRes.itemsCopied);
+            dispatch(setIdle())
             if (status) toast.warn("Network error.");
             if (finalRes.itemsCopied.length > 0) {
-              console.log("reached");
               toast.success("Copied " + finalRes.itemsCopied.length + " items");
             }
             if (finalRes.itemsNotCopied.length > 0)
@@ -271,7 +335,112 @@ const OverlayComponent = () => {
 
     closeOverlay();
     dispatch(resetSelectionPath());
+    dispatch(resetSelected());
+    dispatch(setIdle())
   };
+
+  const moveItems = () => {
+    const itemNames = items.map(
+      (fname) => fname.split("/")[fname.split("/").length - 1]
+    );
+    const selectedFileNames = contents.files
+      .filter((_) => itemNames.includes(_.fName))
+      .map((_) => _.fName);
+    const selectedFolderNames = contents.folders
+      .filter((_) => itemNames.includes(_.fName))
+      .map((_) => _.fName);
+    const fileReqBody = [];
+    const folderReqBody = [];
+    selectedFileNames.map((fname) =>
+      fileReqBody.push({
+        srcDir: {
+          base,
+          dir,
+        },
+        name: fname,
+        destDir: {
+          base: basePath,
+          dir: currentPath,
+        },
+      })
+    );
+    selectedFolderNames.map((fname) =>
+      folderReqBody.push({
+        srcDir: {
+          base,
+          dir: dir.concat("/", fname),
+        },
+        name: fname,
+        destDir: {
+          base: basePath,
+          dir: currentPath.concat("/", fname),
+        },
+      })
+    );
+    // console.log(folderReqBody);
+    // console.log(fileReqBody);
+    var finalRes = {
+      itemsMoved: [],
+      itemsNotMoved: [],
+    };
+
+    var status = false;
+    axios
+      .post("/dir/move", folderReqBody)
+      .then(
+        (res) => {
+          finalRes.itemsMoved = [
+            ...finalRes.itemsMoved,
+            ...res.data.dirs_moved,
+          ];
+          finalRes.itemsNotMoved = [
+            ...finalRes.itemsNotMoved,
+            ...res.data.dirs_notmoved,
+          ];
+          // console.log(itemsCopied);
+          // console.log(itemsNotCopied);
+        },
+        (err) => {
+          status = true;
+        }
+      )
+      .then(() => {
+        axios
+          .post("/file/move", fileReqBody)
+          .then(
+            (res) => {
+              finalRes.itemsMoved = [
+                ...finalRes.itemsMoved,
+                ...res.data.files_moved,
+              ];
+              finalRes.itemsNotMoved = [
+                ...finalRes.itemsNotMoved,
+                ...res.data.files_unmoved,
+              ];
+            },
+            (err) => {
+              status = true;
+            }
+          )
+          .then(() => {
+            dispatch(setIdle())
+            if (status) toast.warn("Network error.");
+            if (finalRes.itemsMoved.length > 0) {
+              toast.success("Moved " + finalRes.itemsMoved.length + " items");
+            }
+            if (finalRes.itemsNotMoved.length > 0)
+              toast.warn(
+                "Unable to move: " + finalRes.itemsNotMoved.toString()
+              );
+          });
+      });
+
+    closeOverlay();
+    dispatch(resetSelectionPath());
+    dispatch(resetSelected());
+    dispatch(setIdle())
+  };
+
   const toastId = React.useRef(null);
   const uploadFiles = () => {
     // var totalUploadSize=0
@@ -650,6 +819,110 @@ const OverlayComponent = () => {
               onClick={() => copyItems()}
             >
               Copy
+            </Button>
+          </div>
+        </div>
+        <button
+          type="button"
+          className="btn-close text-reset"
+          aria-label="Close"
+          style={{ paddingRight: "3%" }}
+          onClick={() => {
+            closeOverlay();
+            dispatch(resetSelectionPath());
+          }}
+        />
+      </div>
+    );
+  }else if (type === "moveOne") {
+    contentFrag = (
+      <div
+        style={{
+          width: "80%",
+          height: "80%",
+          backgroundColor: "white",
+          display: "flex",
+          border: "2px",
+          borderStyle: " solid",
+          borderColor: "#313539",
+          borderRadius: "15px",
+          justifyContent: "space-between",
+          paddingTop: "10px",
+          paddingBottom: "7px",
+        }}
+      >
+        <div style={{ width: "90%", paddingLeft: "3%", paddingBottom: "2%" }}>
+          <div style={{ display: "inline-flex" }}>
+            {"Copy " + fName + " to: "}
+          </div>
+          <div style={{ height: "90%", width: "100%" }}>
+            <PathSelection />
+          </div>
+          <div style={{ height: "10%", width: "100%" }}>
+            <Button
+              variant="light"
+              style={{
+                backgroundColor: "white",
+                paddingLeft: "10px",
+                margin: "5px",
+                marginLeft: "0px",
+                paddingTop: "2px",
+              }}
+              onClick={() => moveItem()}
+            >
+              Move
+            </Button>
+          </div>
+        </div>
+        <button
+          type="button"
+          className="btn-close text-reset"
+          aria-label="Close"
+          style={{ paddingRight: "3%" }}
+          onClick={() => {
+            closeOverlay();
+            dispatch(resetSelectionPath());
+          }}
+        />
+      </div>
+    );
+  }else if (type === "moveMany") {
+    contentFrag = (
+      <div
+        style={{
+          width: "80%",
+          height: "80%",
+          backgroundColor: "white",
+          display: "flex",
+          border: "2px",
+          borderStyle: " solid",
+          borderColor: "#313539",
+          borderRadius: "15px",
+          justifyContent: "space-between",
+          paddingTop: "10px",
+          paddingBottom: "7px",
+        }}
+      >
+        <div style={{ width: "90%", paddingLeft: "3%", paddingBottom: "2%" }}>
+          <div style={{ display: "inline-flex" }}>
+            {"Move " + items.length + " items to: "}
+          </div>
+          <div style={{ height: "90%", width: "100%" }}>
+            <PathSelection />
+          </div>
+          <div style={{ height: "10%", width: "100%" }}>
+            <Button
+              variant="light"
+              style={{
+                backgroundColor: "white",
+                paddingLeft: "10px",
+                margin: "5px",
+                marginLeft: "0px",
+                paddingTop: "2px",
+              }}
+              onClick={() => moveItems()}
+            >
+              Move
             </Button>
           </div>
         </div>

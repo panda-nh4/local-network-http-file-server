@@ -26,6 +26,10 @@ const FabComponent = () => {
     dispatch(setDeleteMany("copyMany"));
     dispatch(setHidden(false));
   };
+  const moveFiles = () => {
+    dispatch(setDeleteMany("moveMany"));
+    dispatch(setHidden(false));
+  };
 
   const fabContents =
     selectedF === 0 ? (
@@ -70,7 +74,11 @@ const FabComponent = () => {
         >
           <BiCopy />
         </Action>
-        <Action text="Move" style={{ background: "#313539" }}>
+        <Action
+          text="Move"
+          style={{ background: "#313539" }}
+          onClick={() => moveFiles()}
+        >
           <BiCut />
         </Action>
         <Action

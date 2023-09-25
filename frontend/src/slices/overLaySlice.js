@@ -42,6 +42,11 @@ const overlaySlice = createSlice({
       state.isFolder = action.payload.isFolder;
       state.fName = action.payload.fName;
     },
+    setMoveOne: (state, action) => {
+      state.type = action.payload.type;
+      state.isFolder = action.payload.isFolder;
+      state.fName = action.payload.fName;
+    },
     setUpload: (state, action) => {
       state.type = action.payload;
     },
@@ -56,5 +61,6 @@ export const {
   setDeleteMany,
   setUpload,
   setCopyOne,
+  setMoveOne,
 } = overlaySlice.actions;
 export default overlaySlice.reducer;

@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPath } from "../slices/pathSlice.js";
 import { setIdle } from "../slices/contentSlice.js";
 import { deselectOne, selectOne } from "../slices/selectedSlice.js";
-import { setHidden, setRename, setDeleteOne } from "../slices/overLaySlice.js";
+import { setHidden, setRename, setDeleteOne,setCopyOne,setMoveOne } from "../slices/overLaySlice.js";
 const CardItem = ({
   fName,
   isFolder,
@@ -43,6 +43,14 @@ const CardItem = ({
   };
   const rename = () => {
     dispatch(setRename({ type: "Rename", isFolder, fName: fNameToShow }));
+    dispatch(setHidden(false));
+  };
+  const copyItem = () => {
+    dispatch(setCopyOne({ isFolder, fName: fNameToShow, type: "copyOne" }));
+    dispatch(setHidden(false));
+  };
+  const moveItem = () => {
+    dispatch(setMoveOne({ isFolder, fName: fNameToShow, type: "moveOne" }));
     dispatch(setHidden(false));
   };
   const curDate = new Date();
@@ -150,16 +158,16 @@ const CardItem = ({
             {modTime(modified)}
           </Card.Text>
           <div style={{ display: "flex", alignItems: "center" }}>
-            <Dropdown style={{ display: showOptions ? "": "none" }}>
+            <Dropdown style={{ display: showOptions ? "" : "none" }}>
               <Dropdown.Toggle as={CustomToggle} />
               <Dropdown.Menu size="sm" title="">
                 {/* <Dropdown.Header>Options</Dropdown.Header> */}
                 <Dropdown.Item onClick={() => downloadFile()}>
                   Download
                 </Dropdown.Item>
-                <Dropdown.Item onClick={()=>rename()}>Rename</Dropdown.Item>
-                <Dropdown.Item>Copy</Dropdown.Item>
-                <Dropdown.Item>Move</Dropdown.Item>
+                <Dropdown.Item onClick={() => rename()}>Rename</Dropdown.Item>
+                <Dropdown.Item onClick={() => copyItem()}>Copy</Dropdown.Item>
+                <Dropdown.Item onClick={() => moveItem()}>Move </Dropdown.Item>
                 <Dropdown.Item onClick={() => deleteItem()}>
                   Delete
                 </Dropdown.Item>
