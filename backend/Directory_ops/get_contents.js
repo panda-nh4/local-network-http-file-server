@@ -7,7 +7,6 @@ const get_dir_contents = asyncHandler(async (req, res) => {
   var o = { folders: [], files: [] };
   var errors = false;
   // const error_debug=[]
-
   fs.access(dirPath, (err) => {
     if (!err) {
       fs.readdir(dirPath, async (err, files) => {
@@ -26,13 +25,14 @@ const get_dir_contents = asyncHandler(async (req, res) => {
               }
             },
             (err) => {
+              console.log(err,file_name)
               errors = true;
             }
           );
         };
         await Promise.all(files.map(check_file)).then(() => {
-          if (errors) {
-            res.status(404).json("Error");
+          if (errors && o.files.length===0 && o.folders.length===0) {
+            res.status(500).json("Error");
           } else {
             res.status(200).json(o);
           }
