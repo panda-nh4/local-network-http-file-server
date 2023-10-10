@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getLocations } from "../slices/locationsSlice";
 import { setBasePath } from "../slices/pathSlice";
 import { setIdle } from "../slices/contentSlice";
+import { toggleFAB } from "../slices/selectedSlice";
 
 const Header = () => {
   const [show, setShow] = useState(false);
@@ -29,6 +30,7 @@ const Header = () => {
     dispatch(setBasePath(base));
     dispatch(setIdle());
     setShow(false);
+    dispatch(toggleFAB(true))
   };
   return (
     <>
@@ -41,7 +43,7 @@ const Header = () => {
         <Container fluid>
           <Navbar.Toggle
             aria-controls={`offcanvasNavbar-expand-false`}
-            onClick={() => setShow(true)}
+            onClick={() => {setShow(true);dispatch(toggleFAB(false))}}
           />
           <Navbar.Offcanvas
             id="offcanvasNavbar-expand-false"
@@ -58,7 +60,7 @@ const Header = () => {
                 className="btn-close text-reset"
                 data-bs-dismiss="offcanvas"
                 aria-label="Close"
-                onClick={() => setShow(false)}
+                onClick={() => {setShow(false);dispatch(toggleFAB(true))}}
               ></button>
             </Offcanvas.Header>
             <Offcanvas.Body>

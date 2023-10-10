@@ -744,7 +744,7 @@ const OverlayComponent = () => {
           borderRadius: "15px",
           justifyContent: "space-between",
           paddingTop: "10px",
-          paddingBottom: "7px",
+          paddingBottom: "30px",
         }}
       >
         <div style={{ width: "90%", paddingLeft: "3%", paddingBottom: "2%" }}>

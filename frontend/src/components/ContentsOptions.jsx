@@ -91,7 +91,7 @@ const ContentsOptions = () => {
             display: "flex",
             alignItems: "center",
             justifyContent:"center",
-            width: "30%",
+            width: "27%",
           }}
         >
           <div style={{cursor:"pointer"}} onClick={()=>clicked("Modified")}>Modified</div>

@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setDeleteMany, setHidden, setNewDir } from "../slices/overLaySlice";
 const FabComponent = () => {
   const selectedF = useSelector((state) => state.select.numberSelected);
+  const showFAB= useSelector((state) => state.select.showFAB);
   const dispatch = useDispatch();
   const createFolder = () => {
     dispatch(setNewDir({ type: "Create" }));
@@ -31,8 +32,8 @@ const FabComponent = () => {
     dispatch(setHidden(false));
   };
 
-  const fabContents =
-    selectedF === 0 ? (
+  var fabContents =
+    selectedF === 0  ? (
       <Fab
         mainButtonStyles={{ background: "#212529" }}
         // actionButtonStyles={actionButtonStyles}
@@ -93,6 +94,10 @@ const FabComponent = () => {
         </Action>
       </Fab>
     );
+
+  if (!showFAB){
+    fabContents=<></>
+  }
   return fabContents;
 };
 

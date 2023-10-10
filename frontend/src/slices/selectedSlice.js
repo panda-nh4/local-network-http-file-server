@@ -6,6 +6,7 @@ const initialState = {
   selectedSize: 0,
   allSelected: false,
   totalItems: 0,
+  showFAB: true,
 };
 
 const selectedSlice = createSlice({
@@ -42,6 +43,9 @@ const selectedSlice = createSlice({
     selectAllItems: (state) => {
       state.allSelected = true;
     },
+    toggleFAB: (state, action) => {
+      state.showFAB = action.payload;
+    },
   },
 });
 export const {
@@ -50,5 +54,6 @@ export const {
   setTotalItems,
   resetSelected,
   selectAllItems,
+  toggleFAB,
 } = selectedSlice.actions;
 export default selectedSlice.reducer;
