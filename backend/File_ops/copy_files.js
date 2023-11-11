@@ -1,5 +1,5 @@
 import path from "path";
-import { check_exists } from "../Utils/fileUtils.js";
+import { check_exists, deleteDirInfo } from "../Utils/fileUtils.js";
 import fs from "fs";
 import asyncHandler from "express-async-handler";
 const copy_files = asyncHandler(async (req, res) => {
@@ -33,7 +33,8 @@ const copy_files = asyncHandler(async (req, res) => {
       await copyFile(srcDir, fname, destDir, fname);
     }
   };
-  await Promise.all(req.actualPathObjs.map(checknCopy)).then(() => {
+  await Promise.all(req.actualPathObjs.map(checknCopy)).then(async() => {
+    await deleteDirInfo(req.actualPathObjs[0].destDir)
     res.status(200).json({ filesCopied, filesNotCopied });
   });
 });

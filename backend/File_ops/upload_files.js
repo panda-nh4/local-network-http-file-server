@@ -1,6 +1,6 @@
 import mv from "mv";
 import path from "path";
-import { check_exists } from "../Utils/fileUtils.js";
+import { check_exists, deleteDirInfo } from "../Utils/fileUtils.js";
 import asyncHandler from "express-async-handler";
 const upload_files = asyncHandler(async (req, res) => {
   const upload_error = [];
@@ -33,7 +33,8 @@ const upload_files = asyncHandler(async (req, res) => {
       await move_file(src, fname, dest, fname);
     }
   };
-  await Promise.all(req.files.map(checknMove)).then(() => {
+  await Promise.all(req.files.map(checknMove)).then(async() => {
+    await deleteDirInfo(req.actualPath)
     res.status(200).json({ success_upload, upload_error });
   });
 });

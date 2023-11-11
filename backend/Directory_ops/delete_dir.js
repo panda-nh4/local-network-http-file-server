@@ -3,6 +3,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import asyncHandler from "express-async-handler";
+import { deleteDirInfo } from "../Utils/fileUtils.js";
 
 const delete_dir = asyncHandler(async (req, res) => {
   const successfullyDeleted = [];
@@ -27,7 +28,8 @@ const delete_dir = asyncHandler(async (req, res) => {
       }
     }
   };
-  await Promise.all(dirs.map(delOne)).then(() => {
+  await Promise.all(dirs.map(delOne)).then(async() => {
+    await deleteDirInfo(dirs[0].dir)
     res.status(200).json({ successfullyDeleted, unableToDelete, doesNotExist });
   });
 });

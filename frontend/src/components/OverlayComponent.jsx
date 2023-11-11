@@ -194,13 +194,13 @@ const OverlayComponent = () => {
       ];
       axios.post("/file/move", copyReqBody).then(
         (res) => {
-          // console.log(res);
-          if (res.data.dirs_moved.length === 1) {
-            toast.success("Copied 1 file");
+           console.log(res);
+          if (res.data.files_moved.length === 1) {
+            toast.success("Moved 1 file");
             dispatch(setIdle())
             closeOverlay();
             dispatch(resetSelectionPath());
-          } else toast.warn("Unable to copy.");
+          } else toast.warn("Unable to move.");
         },
         (err) => {
           toast.warn("Network error.");
@@ -529,7 +529,7 @@ const OverlayComponent = () => {
           type="button"
           className="btn-close text-reset"
           aria-label="Close"
-          style={{ paddingRight: "3%", paddingRight: "8%" }}
+          style={{ paddingRight: "6%"}}
           onClick={() => closeOverlay()}
         />
       </div>
@@ -582,7 +582,7 @@ const OverlayComponent = () => {
           type="button"
           className="btn-close text-reset"
           aria-label="Close"
-          style={{ paddingRight: "3%", paddingRight: "8%" }}
+          style={{ paddingRight: "6%"}}
           onClick={() => closeOverlay()}
         />
       </div>
@@ -627,7 +627,7 @@ const OverlayComponent = () => {
           type="button"
           className="btn-close text-reset"
           aria-label="Close"
-          style={{ paddingRight: "3%", paddingRight: "8%" }}
+          style={{ paddingRight: "6%"}}
           onClick={() => closeOverlay()}
         />
       </div>
@@ -674,7 +674,7 @@ const OverlayComponent = () => {
           type="button"
           className="btn-close text-reset"
           aria-label="Close"
-          style={{ paddingRight: "3%", paddingRight: "8%" }}
+          style={{ paddingRight: "6%"}}
           onClick={() => closeOverlay()}
         />
       </div>
@@ -725,7 +725,7 @@ const OverlayComponent = () => {
           type="button"
           className="btn-close text-reset"
           aria-label="Close"
-          style={{ paddingRight: "3%", paddingRight: "8%" }}
+          style={{ paddingRight: "6%"}}
           onClick={() => closeOverlay()}
         />
       </div>
@@ -774,7 +774,7 @@ const OverlayComponent = () => {
           type="button"
           className="btn-close text-reset"
           aria-label="Close"
-          style={{ paddingRight: "3%" }}
+          style={{ paddingRight: "6%"}}
           onClick={() => {
             closeOverlay();
             dispatch(resetSelectionPath());
@@ -796,7 +796,7 @@ const OverlayComponent = () => {
           borderRadius: "15px",
           justifyContent: "space-between",
           paddingTop: "10px",
-          paddingBottom: "7px",
+          paddingBottom: "30px",
         }}
       >
         <div style={{ width: "90%", paddingLeft: "3%", paddingBottom: "2%" }}>
@@ -826,7 +826,7 @@ const OverlayComponent = () => {
           type="button"
           className="btn-close text-reset"
           aria-label="Close"
-          style={{ paddingRight: "3%" }}
+          style={{ paddingRight: "6%"}}
           onClick={() => {
             closeOverlay();
             dispatch(resetSelectionPath());
@@ -848,7 +848,7 @@ const OverlayComponent = () => {
           borderRadius: "15px",
           justifyContent: "space-between",
           paddingTop: "10px",
-          paddingBottom: "7px",
+          paddingBottom: "30px",
         }}
       >
         <div style={{ width: "90%", paddingLeft: "3%", paddingBottom: "2%" }}>
@@ -878,7 +878,7 @@ const OverlayComponent = () => {
           type="button"
           className="btn-close text-reset"
           aria-label="Close"
-          style={{ paddingRight: "3%" }}
+          style={{ paddingRight: "6%" }}
           onClick={() => {
             closeOverlay();
             dispatch(resetSelectionPath());
@@ -900,7 +900,7 @@ const OverlayComponent = () => {
           borderRadius: "15px",
           justifyContent: "space-between",
           paddingTop: "10px",
-          paddingBottom: "7px",
+          paddingBottom: "30px",
         }}
       >
         <div style={{ width: "90%", paddingLeft: "3%", paddingBottom: "2%" }}>
@@ -930,7 +930,7 @@ const OverlayComponent = () => {
           type="button"
           className="btn-close text-reset"
           aria-label="Close"
-          style={{ paddingRight: "3%" }}
+          style={{ paddingRight: "6%" }}
           onClick={() => {
             closeOverlay();
             dispatch(resetSelectionPath());

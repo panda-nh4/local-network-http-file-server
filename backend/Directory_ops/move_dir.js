@@ -4,6 +4,7 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 import asyncHandler from "express-async-handler";
 import fse from 'fs-extra'
+import { deleteDirInfo } from "../Utils/fileUtils.js";
 const move_dir = asyncHandler(async (req, res) => {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
@@ -23,7 +24,9 @@ const move_dir = asyncHandler(async (req, res) => {
     }
   };
 
-  await Promise.all(req.actualPathObjs.map(mapfun)).then(() => {
+  await Promise.all(req.actualPathObjs.map(mapfun)).then(async() => {
+    await deleteDirInfo(path.join(req.actualPathObjs[0].srcDir,".."))
+    await deleteDirInfo(path.join(req.actualPathObjs[0].destDir,".."))
     res.status(200).json({ dirs_moved, dirs_notmoved });
   });
 });

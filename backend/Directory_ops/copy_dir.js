@@ -4,7 +4,7 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 import asyncHandler from "express-async-handler";
 import fse from 'fs-extra'
-import { check_exists } from "../Utils/fileUtils.js";
+import { check_exists, deleteDirInfo } from "../Utils/fileUtils.js";
 const copy_dir = asyncHandler(async (req, res) => {
   const dirs_copied=[]
   const dirs_notCopied=[]
@@ -22,7 +22,8 @@ const copy_dir = asyncHandler(async (req, res) => {
     }
   }
 
-  await Promise.all(req.actualPathObjs.map(mapfun)).then(()=>{
+  await Promise.all(req.actualPathObjs.map(mapfun)).then(async()=>{
+    await deleteDirInfo(path.join(req.actualPathObjs[0].destDir,".."))
     res.status(200).json({dirs_copied,dirs_notCopied})
   })
   

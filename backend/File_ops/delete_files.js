@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { deleteDirInfo } from "../Utils/fileUtils.js";
 import asyncHandler from "express-async-handler";
 const delete_files = asyncHandler(async (req, res) => {
   const successfullyDeleted = [];
@@ -22,7 +23,9 @@ const delete_files = asyncHandler(async (req, res) => {
       //   console.error(err);
     }
   };
-  await Promise.all(req.actualPathObjs.map(mapfun)).then(() => {
+  await Promise.all(req.actualPathObjs.map(mapfun)).then(async() => {
+    // console.log(req.actualPathObjs[0].dir)
+    await deleteDirInfo(req.actualPathObjs[0].dir)
     res.status(200).json({ successfullyDeleted, unableToDelete, doesNotExist });
   });
 });

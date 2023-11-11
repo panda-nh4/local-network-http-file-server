@@ -2,6 +2,7 @@ import fs from "fs";
 import { promisify } from "util";
 import fastFolderSize from "fast-folder-size";
 import { resolve } from "path";
+import path from "path";
 
 //   Takes in a file path
 //   Returns true if file exists else returns false
@@ -25,6 +26,18 @@ const getInfo = async (filePath) => {
   });
 };
 
+const deleteDirInfo=async(curPath)=>{
+  return new Promise((resolve,reject)=>{
+    const filePath = path.join(curPath,"dirInfo.json");
+    fs.unlink(filePath,(err)=>{
+      if (err){
+        console.log(err)
+        // reject(err)
+      }
+      resolve("Done")
+    })
+  })
+}
 // // Get size in appropriate magnitude
 // const getProperSize=async(s)=>{
 //   const units=["Bytes", "KB", "MB", "GB", "TB"]
@@ -52,4 +65,4 @@ const getDirSize = async (dirPath) => {
     });
   });
 };
-export { check_exists, getInfo as getFileInfo ,getDirSize};
+export { check_exists, getInfo as getFileInfo ,getDirSize,deleteDirInfo};

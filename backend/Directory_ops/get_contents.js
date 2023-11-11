@@ -5,6 +5,7 @@ import asyncHandler from "express-async-handler";
 const get_dir_contents = asyncHandler(async (req, res) => {
   const dirPath = req.actualPath;
   const jsonFile = path.join(dirPath, "dirInfo.json");
+  // console.log(jsonFile)
   var o = { folders: [], files: [] };
   var errors = false;
   // const error_debug=[]
@@ -37,6 +38,9 @@ const get_dir_contents = asyncHandler(async (req, res) => {
               if (errors && o.files.length === 0 && o.folders.length === 0) {
                 res.status(500).json("Error");
               } else {
+                if(o.files.length === 0 && o.folders.length === 0){
+                  o={files:[],folders:[]}
+                }
                 fs.writeFile(jsonFile, JSON.stringify(o), {encoding:'utf8',flag:"w"},(err)=>{
                   if(err){
                     console.log("Error writing data")

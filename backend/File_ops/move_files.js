@@ -1,6 +1,6 @@
 import mv from "mv";
 import path from "path";
-import { check_exists } from "../Utils/fileUtils.js";
+import { check_exists, deleteDirInfo } from "../Utils/fileUtils.js";
 import asyncHandler from "express-async-handler";
 const move_files = asyncHandler(async (req, res) => {
   const files_moved = [];
@@ -31,7 +31,9 @@ const move_files = asyncHandler(async (req, res) => {
       await move_file(src, fname, dest, fname);
     }
   };
-  await Promise.all(req.actualPathObjs.map(checknMove)).then(() => {
+  await Promise.all(req.actualPathObjs.map(checknMove)).then(async() => {
+    await deleteDirInfo(req.actualPathObjs[0].srcDir)
+    await deleteDirInfo(req.actualPathObjs[0].destDir)
     res.status(200).json({ files_moved, files_unmoved });
   });
 });

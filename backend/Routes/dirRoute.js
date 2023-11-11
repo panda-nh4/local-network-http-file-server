@@ -9,6 +9,7 @@ import zip_dir from "../Directory_ops/download_dir.js";
 import express from "express";
 import get_dir_size from "../Directory_ops/get_size.js";
 import { matchLocation, matchLocationArray, matchLocations } from "../Middleware/locationMatcher.js";
+import renameDir from "../Directory_ops/rename_dir.js";
 
 const router = express.Router();
 
@@ -16,6 +17,7 @@ router.post("/copy",matchLocations, copy_dir);
 router.post("/create", matchLocation, create_dir);
 router.post("/delete", matchLocationArray,delete_dir);
 router.post("/info", matchLocation, get_dir_info);
+router.post("/rename", matchLocation, renameDir);
 router.post("/view", matchLocation, get_dir_contents);
 router.post("/move", matchLocations,move_dir);
 router.post("/download", matchLocation, zip_dir);
